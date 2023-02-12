@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <button (click)="CleanAll()">Clean Notifications</button>
+
+  &nbsp;
+  <button (click)="joinGroup()">Join A Group</button>&nbsp;
+  <input type="text" [(ngModel)]="group" style="width: 30px" />
+  <div style="padding: 2px"></div>
+
+  <div
+    *ngIf="
+      currentHubConnectionState == hubConnectionState.Connected ||
+      currentHubConnectionState == hubConnectionState.Connecting
+    "
+  >
+    <button (click)="stopConnection()">Stop Connection</button>
+    <div style="padding: 2px"></div>
+  </div>
+
+  <div
+    *ngIf="
+      currentHubConnectionState != hubConnectionState.Connected &&
+      currentHubConnectionState != hubConnectionState.Connecting
+    "
+  >
+    <button (click)="reconnect()">Try Reconnect</button>
+    <div style="padding: 2px"></div>
+  </div>
+
+  <div>Connection Status : {{ currentHubConnectionState }}</div>
+  <div style="padding: 2px"></div>
+
+  <div>
+    Connection Count : {{ connectedClientCount ? connectedClientCount : "N/A" }}
+  </div>
+  <div style="padding: 2px"></div>
+
+  Connected Groups :
+  <span *ngFor="let group of connectedGroups; let i = index"
+    >{{ group }}{{ i + 1 == connectedGroups.length ? "" : ", " }}</span
+  >
+  <div *ngIf="!connectedGroups || !connectedGroups.length">N/A</div>
+
+  <div style="padding: 2px"></div>
+
+  Message Count : {{ messages ? messages.length : 0 }}
+  <div style="padding: 2px"></div>
+
+  <div class="row" *ngIf="messages.length > 0">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <tbody>
+          <tr *ngFor="let message of messages; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ message.contentTemplate }}</td>
+            <td>{{ message.titleTemplate }}</td>
+            <td (click)="CleanAll(message.id)" style="cursor: pointer">
+              <strong>X</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="messages.length <= 0">
+    <span>No messages</span>
+  </div>
+</div>
