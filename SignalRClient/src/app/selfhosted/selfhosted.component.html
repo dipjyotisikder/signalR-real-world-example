@@ -1,9 +1,14 @@
 <div class="container-fluid">
-  <button (click)="CleanAll()">Clean Notifications</button>
+  <button (click)="cleanAll()">Clean Notifications</button>
 
   &nbsp;
   <button (click)="joinGroup()">Join A Group</button>&nbsp;
-  <input type="text" [(ngModel)]="group" style="width: 30px" />
+  <input
+    type="text"
+    [(ngModel)]="group"
+    style="width: 200px"
+    [placeholder]="'hint: bunny chat box'"
+  />
   <div style="padding: 2px"></div>
 
   <div
@@ -51,9 +56,9 @@
         <tbody>
           <tr *ngFor="let message of messages; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ message.contentTemplate }}</td>
-            <td>{{ message.titleTemplate }}</td>
-            <td (click)="CleanAll(message.id)" style="cursor: pointer">
+            <td>{{ message.content }}</td>
+            <td>{{ message.title }}</td>
+            <td (click)="cleanAll(message.id)" style="cursor: pointer">
               <strong>X</strong>
             </td>
           </tr>

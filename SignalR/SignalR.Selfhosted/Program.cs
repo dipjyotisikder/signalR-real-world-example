@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SignalR.Constants;
-using SignalR.Hubs;
+using SignalR.Common;
+using SignalR.Selfhosted.Notification;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +26,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseCors(builder => builder
     .SetIsOriginAllowed(_ => true)
@@ -36,8 +36,9 @@ app.UseCors(builder => builder
 
 app.UseRouting();
 
+app.UseWebSockets();
 app.MapControllers();
 
-app.MapHub<NotificationHub>(CommonConstants.HubEndpoint);
+app.MapHub<NotificationHub>(Constants.HubEndpoint);
 
 app.Run();

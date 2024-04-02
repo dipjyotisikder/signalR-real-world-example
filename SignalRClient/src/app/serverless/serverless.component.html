@@ -41,10 +41,8 @@
         <tbody>
           <tr *ngFor="let message of messages; let i = index">
             <td>{{ i + 1 }}</td>
-            <td>{{ message.droneName }}</td>
-            <td>{{ message.portName }}</td>
-            <td>{{ message.deviceId }}</td>
-            <td>{{ message.droneId }}</td>
+            <td>{{ message.title }}</td>
+            <td>{{ message.content }}</td>
             <td (click)="CleanAll(message.id)" style="cursor: pointer">
               <strong>X</strong>
             </td>

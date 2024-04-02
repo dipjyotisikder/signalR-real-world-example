@@ -1,7 +1,9 @@
 import { AfterViewChecked, Component, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { HubConnection } from '@microsoft/signalr';
-import * as uuid from 'uuid';
+import { environment } from 'src/environments/environment';
+import { HubConstants } from '../Constants';
+import { NotificationMessage } from '../models/NotificationMessage';
 
 @Component({
   selector: 'app-serverless',
@@ -12,12 +14,6 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
   private hubConnection: HubConnection | undefined;
 
   messages: NotificationMessage[] = [];
-
-  userId: string;
-
-  signalR = {
-    serverUrl: 'https://localhost:44333/Notifications?groupName=1',
-  };
 
   hubConnectionState = signalR.HubConnectionState;
   currentHubConnectionState = this.hubConnectionState.Disconnected;
@@ -33,7 +29,6 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.userId = uuid.v4();
     this.connectToSignalR();
   }
 
@@ -48,7 +43,7 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
 
   connectToSignalR() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(this.signalR.serverUrl)
+      .withUrl(environment.serverlessServerURL)
       .withAutomaticReconnect()
       .build();
 
@@ -61,7 +56,7 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
       });
 
     this.hubConnection.on(
-      'NotificationCreated',
+      HubConstants.NOTIFICATION_CREATED_HUB_EVENT,
       (data: NotificationMessage) => {
         data.id = this.messages.length + 1;
         this.messages.push(data);
@@ -69,13 +64,19 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
       }
     );
 
-    this.hubConnection.on('ConnectedClientUpdated', (data: number) => {
-      this.connectedClientCount = data;
-    });
+    this.hubConnection.on(
+      HubConstants.CONNECTED_CLIENT_UPDATED_HUB_EVENT,
+      (data: number) => {
+        this.connectedClientCount = data;
+      }
+    );
 
-    this.hubConnection.on('ExceptionOccured', (data: string) => {
-      console.log(data);
-    });
+    this.hubConnection.on(
+      HubConstants.EXCEPTION_OCCURED_HUB_EVENT,
+      (data: string) => {
+        console.log(data);
+      }
+    );
   }
 
   reconnect() {
@@ -94,7 +95,7 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  CleanAll(id: any = null) {
+  CleanAll(id: number = null) {
     if (id) {
       const index = this.messages.findIndex((x) => x.id == id);
       if (index > -1) {
@@ -102,18 +103,4 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
       }
     } else this.messages = [];
   }
-}
-
-interface NotificationMessage {
-  id: number;
-  titleTemplate: string;
-  contentTemplate: string;
-  isRead: boolean;
-  type: number;
-  deviceId: string;
-  droneId: number;
-  droneName: string;
-  portName: string;
-  notificationDetails: any;
-  timeStamp: string;
 }

@@ -1,6 +1,6 @@
-﻿{
+{
   "profiles": {
-    "SignalR.Serverless": {
+    "SignalR.Selfhosted": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:5001;http://localhost:8001"
+      "applicationUrl": "https://localhost:5000;http://localhost:8000"
     }
   }
 }

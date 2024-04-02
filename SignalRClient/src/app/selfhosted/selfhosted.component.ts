@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import * as uuid from 'uuid';
+import { environment } from 'src/environments/environment';
+import { HubConstants, MessageConstants } from '../Constants';
+import { NotificationMessage } from '../models/NotificationMessage';
 
 @Component({
   selector: 'app-selfhosted',
@@ -8,15 +10,8 @@ import * as uuid from 'uuid';
   styleUrls: ['./selfhosted.component.css'],
 })
 export class SelfhostedComponent implements OnInit {
-  private hubConnection: signalR.HubConnection | undefined;
-
-  messages: any[] = new Array<any>();
-
-  userId: string;
-
-  signalR = {
-    serverUrl: 'https://localhost:44333/signalR/notificationHub',
-  };
+  hubConnection: signalR.HubConnection | undefined;
+  messages: NotificationMessage[] = new Array<any>();
 
   hubConnectionState = signalR.HubConnectionState;
 
@@ -32,7 +27,6 @@ export class SelfhostedComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userId = uuid.v4();
     this.connectToSignalR();
   }
 
@@ -47,29 +41,35 @@ export class SelfhostedComponent implements OnInit {
 
   connectToSignalR() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(this.signalR.serverUrl)
+      .withUrl(environment.selfHostedServerURL)
       .withAutomaticReconnect()
       .build();
 
     this.hubConnection.start().catch((err) => {
-      console.error(err.toString());
-      window.alert('Could not connect!');
+      window.alert(MessageConstants.CONNECTION_FAILED);
     });
 
-    this.hubConnection.on('NotificationCreated', (data: any) => {
-      data.id = this.messages.length + 1;
-      this.messages.push(data);
-      this.messages = JSON.parse(JSON.stringify(this.messages));
-      console.log(data);
-    });
+    this.hubConnection.on(
+      HubConstants.NOTIFICATION_CREATED_HUB_EVENT,
+      (data: NotificationMessage) => {
+        data.id = this.messages.length + 1;
+        this.messages.push(data);
+      }
+    );
 
-    this.hubConnection.on('ConnectedClientUpdated', (data: number) => {
-      this.connectedClientCount = JSON.parse(JSON.stringify(data));
-    });
+    this.hubConnection.on(
+      HubConstants.CONNECTED_CLIENT_UPDATED_HUB_EVENT,
+      (data: number) => {
+        this.connectedClientCount = data;
+      }
+    );
 
-    this.hubConnection.on('ExceptionOccured', (data: string) => {
-      console.log(data);
-    });
+    this.hubConnection.on(
+      HubConstants.EXCEPTION_OCCURED_HUB_EVENT,
+      (data: string) => {
+        console.log(data);
+      }
+    );
   }
 
   reconnect() {
@@ -79,7 +79,7 @@ export class SelfhostedComponent implements OnInit {
     ) {
       this.hubConnection.start().catch((err) => {
         console.error(err.toString());
-        window.alert('Could not connect!');
+        window.alert(MessageConstants.CONNECTION_FAILED);
       });
     }
 
@@ -90,19 +90,20 @@ export class SelfhostedComponent implements OnInit {
 
   joinGroup() {
     if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
-      window.alert('Please connect first!');
+      window.alert(MessageConstants.PLEASE_CONNECT_ALERT);
       return;
     }
 
-    this.hubConnection.invoke('JoinGroup', this.group).then(() => {
-      this.connectedGroup = this.group;
-      this.connectedGroups.push(this.group);
-      this.group = null;
-      console.log(this.connectedGroups);
-    });
+    this.hubConnection
+      .invoke(HubConstants.JOIN_GROUP_HUB_METHOD, this.group)
+      .then(() => {
+        this.connectedGroup = this.group;
+        this.connectedGroups.push(this.group);
+        this.group = null;
+      });
   }
 
-  CleanAll(id: any = null) {
+  cleanAll(id: number = null) {
     if (id) {
       const index = this.messages.findIndex((x) => x.id == id);
       if (index > -1) {

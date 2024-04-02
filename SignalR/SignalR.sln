@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR", "SignalR\SignalR.csproj", "{2AFE3902-BC83-4AB9-BD7F-3FB57E4D1C2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Selfhosted", "SignalR.Selfhosted\SignalR.Selfhosted.csproj", "{2AFE3902-BC83-4AB9-BD7F-3FB57E4D1C2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Serverless", "SignalR.Serverless\SignalR.Serverless.csproj", "{943175B4-0B1A-46FD-8B27-898C981EBC07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Serverless", "SignalR.Serverless\SignalR.Serverless.csproj", "{943175B4-0B1A-46FD-8B27-898C981EBC07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Common", "SignalR.Common\SignalR.Common.csproj", "{A553E2B5-140C-4FBE-A8F7-309D129060C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{943175B4-0B1A-46FD-8B27-898C981EBC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{943175B4-0B1A-46FD-8B27-898C981EBC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{943175B4-0B1A-46FD-8B27-898C981EBC07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A553E2B5-140C-4FBE-A8F7-309D129060C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A553E2B5-140C-4FBE-A8F7-309D129060C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A553E2B5-140C-4FBE-A8F7-309D129060C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A553E2B5-140C-4FBE-A8F7-309D129060C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
