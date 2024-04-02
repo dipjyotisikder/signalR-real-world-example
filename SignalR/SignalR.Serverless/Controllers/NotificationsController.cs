@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.SignalR.Management;
-using SignalR.Common;
-using SignalR.Models;
+using SignalR.Common.Constants;
+using SignalR.Common.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace SignalR.Serverless.Controllers
+namespace SignalR.ServerLess.Controllers
 {
     [ApiController]
     [Route("[controller]")]

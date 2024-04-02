@@ -1,5 +1,8 @@
-﻿namespace SignalR.Common
+﻿namespace SignalR.Common.Constants
 {
+    /// <summary>
+    /// Represents an static class to hold constants.
+    /// </summary>
     public static class Constants
     {
         /// <summary>
