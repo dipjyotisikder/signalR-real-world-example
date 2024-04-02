@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace SignalR.Selfhosted.Notification;
+namespace SignalR.SelfHosted.Notification;
 public class NotificationHub : Hub
 {
     public Task JoinGroup(string groupName)
