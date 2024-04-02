@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using SignalR.Common;
+using SignalR.Common.Constants;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

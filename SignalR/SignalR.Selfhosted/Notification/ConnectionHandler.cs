@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SignalR.Selfhosted.Notification;
+namespace SignalR.SelfHosted.Notification;
 
 /// <summary>
 /// Class to store connections.

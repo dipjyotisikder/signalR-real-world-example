@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SignalR.Common;
-using SignalR.Selfhosted.Notification;
+using SignalR.Common.Constants;
+using SignalR.SelfHosted.Notification;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using SignalR.Common;
-using SignalR.Models;
+using SignalR.Common.Constants;
+using SignalR.Common.Models;
 using System.Threading.Tasks;
 
-namespace SignalR.Selfhosted.Notification;
+namespace SignalR.SelfHosted.Notification;
 [ApiController]
 [Route("[controller]")]
 public class NotificationsController : ControllerBase
@@ -19,6 +19,11 @@ public class NotificationsController : ControllerBase
     [HttpPost("groups/{groupName}")]
     public IActionResult CreateGroup([FromRoute] string groupName)
     {
+        if (string.IsNullOrWhiteSpace(groupName))
+        {
+            return BadRequest("Invalid/empty group name.");
+        }
+
         ConnectionHandler.Groups.Add(groupName);
         return Ok(ConnectionHandler.Groups);
     }
@@ -49,6 +54,11 @@ public class NotificationsController : ControllerBase
     [HttpPost("send/{groupName}")]
     public async Task<IActionResult> SendToGroup([FromRoute] string groupName)
     {
+        if (string.IsNullOrWhiteSpace(groupName))
+        {
+            return BadRequest("Invalid/empty group name.");
+        }
+
         await _hubContext.Clients
             .Groups(groupName)
             .SendCoreAsync(Constants.NotificationCreatedEvent,
