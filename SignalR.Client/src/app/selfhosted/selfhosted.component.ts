@@ -9,21 +9,25 @@ import { NotificationMessage } from '../models/NotificationMessage';
   templateUrl: './selfhosted.component.html',
   styleUrls: ['./selfhosted.component.css'],
 })
-export class SelfhostedComponent implements OnInit {
-  hubConnection: signalR.HubConnection | undefined;
+export class SelfHostedComponent implements OnInit {
+  // HUB CONFIGURATION
+  hubConnection: signalR.HubConnection | null = null;
+  hubConnectionState = signalR.HubConnectionState;
+  currentHubConnectionState = signalR.HubConnectionState.Disconnected;
+
   messages: NotificationMessage[] = new Array<any>();
 
-  hubConnectionState = signalR.HubConnectionState;
-
-  group: string = null;
-  connectedGroup: string = null;
+  groupName: string = '';
+  connectedGroup: string = '';
   connectedGroups: string[] = [];
-  connectedClientCount = null;
-  currentHubConnectionState = this.hubConnectionState.Disconnected;
+  connectedClientCount: number = 0;
 
   constructor() {}
+
   ngAfterViewChecked(): void {
-    this.currentHubConnectionState = this.hubConnection.state;
+    this.currentHubConnectionState = this.hubConnection
+      ? this.hubConnection.state
+      : signalR.HubConnectionState.Disconnected;
   }
 
   ngOnInit() {
@@ -31,12 +35,13 @@ export class SelfhostedComponent implements OnInit {
   }
 
   stopConnection() {
-    this.hubConnection.stop().then((x) => {
-      this.group = null;
-      this.connectedGroup = null;
-      this.connectedGroups = [];
-      this.connectedClientCount = null;
-    });
+    this.hubConnection &&
+      this.hubConnection.stop().then(() => {
+        this.groupName = '';
+        this.connectedGroup = '';
+        this.connectedGroups = [];
+        this.connectedClientCount = 0;
+      });
   }
 
   connectToSignalR() {
@@ -45,7 +50,7 @@ export class SelfhostedComponent implements OnInit {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch((err) => {
+    this.hubConnection.start().catch(() => {
       window.alert(MessageConstants.CONNECTION_FAILED);
     });
 
@@ -65,7 +70,7 @@ export class SelfhostedComponent implements OnInit {
     );
 
     this.hubConnection.on(
-      HubConstants.EXCEPTION_OCCURED_HUB_EVENT,
+      HubConstants.EXCEPTION_OCCURRED_HUB_EVENT,
       (data: string) => {
         console.log(data);
       }
@@ -77,7 +82,7 @@ export class SelfhostedComponent implements OnInit {
       this.hubConnection &&
       this.hubConnection.state == signalR.HubConnectionState.Disconnected
     ) {
-      this.hubConnection.start().catch((err) => {
+      this.hubConnection.start().catch((err: any) => {
         console.error(err.toString());
         window.alert(MessageConstants.CONNECTION_FAILED);
       });
@@ -89,21 +94,25 @@ export class SelfhostedComponent implements OnInit {
   }
 
   joinGroup() {
-    if (this.hubConnection.state !== signalR.HubConnectionState.Connected) {
+    if (
+      this.hubConnection &&
+      this.hubConnection.state !== signalR.HubConnectionState.Connected
+    ) {
       window.alert(MessageConstants.PLEASE_CONNECT_ALERT);
       return;
     }
 
-    this.hubConnection
-      .invoke(HubConstants.JOIN_GROUP_HUB_METHOD, this.group)
-      .then(() => {
-        this.connectedGroup = this.group;
-        this.connectedGroups.push(this.group);
-        this.group = null;
-      });
+    this.hubConnection &&
+      this.hubConnection
+        .invoke(HubConstants.JOIN_GROUP_HUB_METHOD, this.groupName)
+        .then(() => {
+          this.connectedGroup = this.groupName;
+          this.connectedGroups.push(this.groupName);
+          this.groupName = '';
+        });
   }
 
-  cleanAll(id: number = null) {
+  cleanAll(id?: number) {
     if (id) {
       const index = this.messages.findIndex((x) => x.id == id);
       if (index > -1) {
