@@ -10,7 +10,7 @@ import { NotificationMessage } from '../models/NotificationMessage';
   templateUrl: './serverless.component.html',
   styleUrls: ['./serverless.component.css'],
 })
-export class ServerlessComponent implements OnInit, AfterViewChecked {
+export class ServerlessComponent implements OnInit {
   private hubConnection: HubConnection | undefined;
   hubConnectionState = signalR.HubConnectionState;
   currentHubConnectionState = this.hubConnectionState.Disconnected;
@@ -23,12 +23,6 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
   connectionPossible = true;
 
   constructor() {}
-
-  ngAfterViewChecked(): void {
-    this.currentHubConnectionState = this.hubConnection
-      ? this.hubConnection.state
-      : this.hubConnectionState.Disconnected;
-  }
 
   ngOnInit() {
     this.connectToSignalR();

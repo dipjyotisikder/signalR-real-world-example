@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'src/environments/environment';
 import { HubConstants, MessageConstants } from '../Constants';
@@ -8,6 +13,7 @@ import { NotificationMessage } from '../models/NotificationMessage';
   selector: 'app-selfhosted',
   templateUrl: './selfhosted.component.html',
   styleUrls: ['./selfhosted.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelfHostedComponent implements OnInit {
   // HUB CONFIGURATION
@@ -22,13 +28,7 @@ export class SelfHostedComponent implements OnInit {
   connectedGroups: string[] = [];
   connectedClientCount: number = 0;
 
-  constructor() {}
-
-  ngAfterViewChecked(): void {
-    this.currentHubConnectionState = this.hubConnection
-      ? this.hubConnection.state
-      : signalR.HubConnectionState.Disconnected;
-  }
+  constructor(public cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.connectToSignalR();
@@ -41,6 +41,7 @@ export class SelfHostedComponent implements OnInit {
         this.connectedGroup = '';
         this.connectedGroups = [];
         this.connectedClientCount = 0;
+        this.cdr.detectChanges();
       });
   }
 
@@ -50,15 +51,28 @@ export class SelfHostedComponent implements OnInit {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch(() => {
-      window.alert(MessageConstants.CONNECTION_FAILED);
-    });
+    this.hubConnection
+      .start()
+      .then(() => {
+        this.currentHubConnectionState = this.hubConnection
+          ? this.hubConnection.state
+          : signalR.HubConnectionState.Disconnected;
+
+        this.cdr.detectChanges();
+      })
+      .catch(() => {
+        this.currentHubConnectionState = this.hubConnection
+          ? this.hubConnection.state
+          : signalR.HubConnectionState.Disconnected;
+        window.alert(MessageConstants.CONNECTION_FAILED);
+      });
 
     this.hubConnection.on(
       HubConstants.NOTIFICATION_CREATED_HUB_EVENT,
       (data: NotificationMessage) => {
         data.id = this.messages.length + 1;
         this.messages.push(data);
+        this.cdr.detectChanges();
       }
     );
 
@@ -66,6 +80,7 @@ export class SelfHostedComponent implements OnInit {
       HubConstants.CONNECTED_CLIENT_UPDATED_HUB_EVENT,
       (data: number) => {
         this.connectedClientCount = data;
+        this.cdr.detectChanges();
       }
     );
 
@@ -109,6 +124,8 @@ export class SelfHostedComponent implements OnInit {
           this.connectedGroup = this.groupName;
           this.connectedGroups.push(this.groupName);
           this.groupName = '';
+
+          this.cdr.detectChanges();
         });
   }
 
@@ -119,5 +136,7 @@ export class SelfHostedComponent implements OnInit {
         this.messages.splice(index, 1);
       }
     } else this.messages = [];
+
+    this.cdr.detectChanges();
   }
 }
