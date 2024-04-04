@@ -3,7 +3,7 @@ export const HubConstants = {
 
   NOTIFICATION_CREATED_HUB_EVENT: 'NotificationCreated',
   CONNECTED_CLIENT_UPDATED_HUB_EVENT: 'ConnectedClientUpdated',
-  EXCEPTION_OCCURED_HUB_EVENT: 'ExceptionOccured',
+  EXCEPTION_OCCURRED_HUB_EVENT: 'ExceptionOccurred',
 };
 
 export const MessageConstants = {

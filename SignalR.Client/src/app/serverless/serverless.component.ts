@@ -10,23 +10,19 @@ import { NotificationMessage } from '../models/NotificationMessage';
   templateUrl: './serverless.component.html',
   styleUrls: ['./serverless.component.css'],
 })
-export class ServerlessComponent implements OnInit, AfterViewChecked {
+export class ServerlessComponent implements OnInit {
   private hubConnection: HubConnection | undefined;
+  hubConnectionState = signalR.HubConnectionState;
+  currentHubConnectionState = this.hubConnectionState.Disconnected;
 
   messages: NotificationMessage[] = [];
 
-  hubConnectionState = signalR.HubConnectionState;
-  currentHubConnectionState = this.hubConnectionState.Disconnected;
-  baseStationId: string = null;
-  connectedBaseStationId: string = null;
-  connectedClientCount = null;
+  baseStationId: string = '';
+  connectedBaseStationId: string = '';
+  connectedClientCount: number = 0;
   connectionPossible = true;
 
   constructor() {}
-
-  ngAfterViewChecked(): void {
-    this.currentHubConnectionState = this.hubConnection.state;
-  }
 
   ngOnInit() {
     this.connectToSignalR();
@@ -35,9 +31,9 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
   stopConnection() {
     this.hubConnection &&
       this.hubConnection.stop().then(() => {
-        this.baseStationId = null;
-        this.connectedBaseStationId = null;
-        this.connectedClientCount = null;
+        this.baseStationId = '';
+        this.connectedBaseStationId = '';
+        this.connectedClientCount = 0;
       });
   }
 
@@ -72,7 +68,7 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
     );
 
     this.hubConnection.on(
-      HubConstants.EXCEPTION_OCCURED_HUB_EVENT,
+      HubConstants.EXCEPTION_OCCURRED_HUB_EVENT,
       (data: string) => {
         console.log(data);
       }
@@ -95,7 +91,7 @@ export class ServerlessComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  CleanAll(id: number = null) {
+  CleanAll(id?: number) {
     if (id) {
       const index = this.messages.findIndex((x) => x.id == id);
       if (index > -1) {

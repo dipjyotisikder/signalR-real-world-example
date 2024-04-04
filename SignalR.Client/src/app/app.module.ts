@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { AppRoutes } from './app.routes';
 import { SharedModule } from './shared/shared.module';
 import { ServerlessComponent } from './serverless/serverless.component';
-import { SelfhostedComponent } from './selfhosted/selfhosted.component';
+import { SelfHostedComponent } from './selfhosted/selfhosted.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
   ],
 
-  declarations: [AppComponent, ServerlessComponent, SelfhostedComponent],
+  declarations: [AppComponent, ServerlessComponent, SelfHostedComponent],
 
   bootstrap: [AppComponent],
 })

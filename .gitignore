@@ -449,5 +449,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-SignalRClient/.angular/
-SignalRClient/package-lock.json
+SignalR.Client/.angular/
+SignalR.Client/package-lock.json
