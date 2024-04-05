@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.SignalR.Management;
-using SignalR.Serverless.Constants;
-using SignalR.Serverless.Models;
+using SignalR.Common.Constants;
+using SignalR.Common.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace SignalR.Serverless.Controllers
+namespace SignalR.ServerLess.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -36,13 +36,13 @@ namespace SignalR.Serverless.Controllers
         public async Task<IActionResult> SendAll()
         {
             await _serviceHubContext.Clients.All
-                .SendCoreAsync(CommonConstants.NotificationCreatedEvent,
+                .SendCoreAsync(Constants.NotificationCreatedEvent,
                     new object[]{
-                        new SendNotificationRequest
+                        new NotificationMessageModel
                         {
                             Id = 1,
-                            ContentTemplate = "Some Content",
-                            TitleTemplate = "Some Title"
+                            Content= "Some Content",
+                            Title= "Some Title"
                         }
                     });
 
@@ -54,13 +54,13 @@ namespace SignalR.Serverless.Controllers
         {
             await _serviceHubContext.Clients
                 .Group(groupName)
-                .SendCoreAsync(CommonConstants.NotificationCreatedEvent,
+                .SendCoreAsync(Constants.NotificationCreatedEvent,
                     new object[]{
-                        new SendNotificationRequest
+                        new NotificationMessageModel
                         {
                             Id = 1,
-                            ContentTemplate = "Some Content",
-                            TitleTemplate = "Some Title"
+                            Content = "Some Content",
+                            Title = "Some Title"
                         }
                     });
 
