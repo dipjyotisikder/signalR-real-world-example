@@ -3,10 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SignalR.Common.Constants;
 using SignalR.SelfHosted.Notification;
+using SignalR.SelfHosted.Notification.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -14,6 +14,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors();
+
+builder.Services.AddScoped<IHubService, HubService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 builder.Services.AddSignalR();
 
