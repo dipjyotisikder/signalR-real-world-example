@@ -5,7 +5,7 @@
   <button (click)="joinGroup()">Join A Group</button>&nbsp;
   <input
     type="text"
-    [(ngModel)]="group"
+    [(ngModel)]="groupName"
     style="width: 200px"
     [placeholder]="'hint: bunny chat box'"
   />
@@ -35,7 +35,8 @@
   <div style="padding: 2px"></div>
 
   <div>
-    Connection Count : {{ connectedClientCount ? connectedClientCount : "N/A" }}
+    Connection Count :
+    {{ connectedClientCount }}
   </div>
   <div style="padding: 2px"></div>
 

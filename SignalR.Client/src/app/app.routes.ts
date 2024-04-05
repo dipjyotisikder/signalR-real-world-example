@@ -1,5 +1,5 @@
 import { RouterModule, Routes } from '@angular/router';
-import { SelfhostedComponent } from './selfhosted/selfhosted.component';
+import { SelfHostedComponent } from './selfhosted/selfhosted.component';
 import { ServerlessComponent } from './serverless/serverless.component';
 
 export const routes: Routes = [
@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path: 'selfhosted',
-    component: SelfhostedComponent,
+    component: SelfHostedComponent,
   },
 ];
 
