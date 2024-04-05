@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.ServerLess", "Signa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Common", "SignalR.Common\SignalR.Common.csproj", "{A553E2B5-140C-4FBE-A8F7-309D129060C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.Selfhosted.Test", "SignalR.Test\SignalR.Selfhosted.Test.csproj", "{59E5DB19-DFE7-42EF-BAA4-968CCCDF36F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalR.SelfHosted.UnitTests", "SignalR.Test\SignalR.SelfHosted.UnitTests.csproj", "{59E5DB19-DFE7-42EF-BAA4-968CCCDF36F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

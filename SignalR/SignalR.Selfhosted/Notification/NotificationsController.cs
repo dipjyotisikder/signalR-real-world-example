@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using SignalR.Common.Constants;
-using SignalR.Common.Models;
+using SignalR.SelfHosted.Notification.Services;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
@@ -9,11 +7,13 @@ namespace SignalR.SelfHosted.Notification;
 [Route("[controller]")]
 public class NotificationsController : ControllerBase
 {
-    private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly INotificationService _notificationService;
+    private readonly IHubService _hubService;
 
-    public NotificationsController(IHubContext<NotificationHub> hubContext)
+    public NotificationsController(INotificationService notificationService, IHubService hubService)
     {
-        _hubContext = hubContext;
+        _notificationService = notificationService;
+        _hubService = hubService;
     }
 
     [HttpPost("groups/{groupName}")]
@@ -24,30 +24,19 @@ public class NotificationsController : ControllerBase
             return BadRequest("Invalid/empty group name.");
         }
 
-        ConnectionHandler.Groups.Add(groupName);
-        return Ok(ConnectionHandler.Groups);
+        return Ok(_hubService.CreateGroup(groupName));
     }
 
     [HttpGet("groups")]
     public IActionResult GetGroups()
     {
-        return Ok(ConnectionHandler.Groups);
+        return Ok(_hubService.GetGroups());
     }
 
     [HttpPost("send/all")]
     public async Task<IActionResult> SendAll()
     {
-        await _hubContext.Clients.Groups(ConnectionHandler.Groups)
-            .SendCoreAsync(Constants.NotificationCreatedEvent,
-                new object[]{
-                    new NotificationMessageModel
-                    {
-                        Id = 1,
-                        Content = "Some Content",
-                        Title = "Some Title"
-                    }
-                });
-
+        await _notificationService.SendToAllAsync();
         return Ok("Sent to all connected clients.");
     }
 
@@ -59,18 +48,7 @@ public class NotificationsController : ControllerBase
             return BadRequest("Invalid/empty group name.");
         }
 
-        await _hubContext.Clients
-            .Groups(groupName)
-            .SendCoreAsync(Constants.NotificationCreatedEvent,
-                new object[]{
-                    new NotificationMessageModel
-                    {
-                        Id = 1,
-                        Content = "Some Content",
-                        Title = "Some Title"
-                    }
-                });
-
+        await _notificationService.SendToGroupAsync(groupName);
         return Ok($"Sent to all connected clients of {groupName} group.");
     }
 }
