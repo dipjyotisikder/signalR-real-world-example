@@ -1,12 +1,21 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SignalR.SelfHosted.Notification.Services;
 using System;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
 public class NotificationHub : Hub
 {
+    private readonly IHubService _hubService;
+
+    public NotificationHub(IHubService hubService)
+    {
+        _hubService = hubService;
+    }
+
     public Task JoinGroup(string groupName)
     {
+        _hubService.CreateGroup(groupName);
         return Groups.AddToGroupAsync(Context.ConnectionId, groupName);
     }
 
