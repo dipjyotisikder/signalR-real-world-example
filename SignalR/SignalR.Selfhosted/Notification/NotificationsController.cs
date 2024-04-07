@@ -16,17 +16,6 @@ public class NotificationsController : ControllerBase
         _hubService = hubService;
     }
 
-    [HttpPost("groups/{groupName}")]
-    public IActionResult CreateGroup([FromRoute] string groupName)
-    {
-        if (string.IsNullOrWhiteSpace(groupName))
-        {
-            return BadRequest("Invalid/empty group name.");
-        }
-
-        return Ok(_hubService.CreateGroup(groupName));
-    }
-
     [HttpGet("groups")]
     public IActionResult GetGroups()
     {

@@ -15,5 +15,5 @@ public static class ConnectionHandler
     /// <summary>
     /// All the groups.
     /// </summary>
-    public static HashSet<string> Groups { get; set; } = new HashSet<string>() { "x", "y" };
+    public static HashSet<string> Groups { get; set; } = new HashSet<string>();
 }
