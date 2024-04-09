@@ -5,9 +5,9 @@ import {
   OnInit,
 } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { environment } from 'src/environments/environment';
 import { HubConstants, MessageConstants } from '../Constants';
 import { NotificationMessage } from '../models/NotificationMessage';
+import { SelfHostedService } from './selfhosted.services';
 
 @Component({
   selector: 'app-selfhosted',
@@ -19,51 +19,37 @@ export class SelfHostedComponent implements OnInit {
   // HUB CONFIGURATION
   hubConnection: signalR.HubConnection | null = null;
   hubConnectionState = signalR.HubConnectionState;
-  currentHubConnectionState = signalR.HubConnectionState.Disconnected;
 
   messages: NotificationMessage[] = new Array<any>();
 
-  groupName: string = '';
-  connectedGroup: string = '';
+  isConnected: boolean = false;
   connectedGroups: string[] = [];
-  connectedClientCount: number = 0;
+  availableGroups: string[] = [];
+  connectedClientCount: number | null = null;
 
-  constructor(public cdr: ChangeDetectorRef) {}
+  constructor(
+    public cdr: ChangeDetectorRef,
+    public service: SelfHostedService
+  ) {}
 
   ngOnInit() {
+    this.service.getGroups().subscribe((success) => {
+      this.availableGroups = success;
+    });
+
     this.connectToSignalR();
   }
 
-  stopConnection() {
-    this.hubConnection &&
-      this.hubConnection.stop().then(() => {
-        this.groupName = '';
-        this.connectedGroup = '';
-        this.connectedGroups = [];
-        this.connectedClientCount = 0;
-        this.cdr.detectChanges();
-      });
-  }
-
   connectToSignalR() {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(environment.selfHostedServerURL)
-      .withAutomaticReconnect()
-      .build();
-
+    this.hubConnection = this.service.buildHubConnection();
     this.hubConnection
       .start()
       .then(() => {
-        this.currentHubConnectionState = this.hubConnection
-          ? this.hubConnection.state
-          : signalR.HubConnectionState.Disconnected;
-
+        this.setIsConnected();
         this.cdr.detectChanges();
       })
       .catch(() => {
-        this.currentHubConnectionState = this.hubConnection
-          ? this.hubConnection.state
-          : signalR.HubConnectionState.Disconnected;
+        this.setIsConnected();
         window.alert(MessageConstants.CONNECTION_FAILED);
       });
 
@@ -79,6 +65,7 @@ export class SelfHostedComponent implements OnInit {
     this.hubConnection.on(
       HubConstants.CONNECTED_CLIENT_UPDATED_HUB_EVENT,
       (data: number) => {
+        console.log('connection count', data);
         this.connectedClientCount = data;
         this.cdr.detectChanges();
       }
@@ -92,39 +79,37 @@ export class SelfHostedComponent implements OnInit {
     );
   }
 
-  reconnect() {
-    if (
-      this.hubConnection &&
-      this.hubConnection.state == signalR.HubConnectionState.Disconnected
-    ) {
-      this.hubConnection.start().catch((err: any) => {
-        console.error(err.toString());
-        window.alert(MessageConstants.CONNECTION_FAILED);
+  stopConnection() {
+    this.hubConnection &&
+      this.hubConnection.stop().then(() => {
+        this.connectedGroups = [];
+        this.connectedClientCount = null;
+        this.isConnected = false;
+        this.cdr.detectChanges();
       });
-    }
-
-    if (!this.hubConnection) {
-      this.connectToSignalR();
-    }
   }
 
-  joinGroup() {
+  joinGroup(groupName: string) {
+    if (
+      this.connectedGroups &&
+      this.connectedGroups.some((x) => x == groupName)
+    )
+      return;
+
     if (
       this.hubConnection &&
       this.hubConnection.state !== signalR.HubConnectionState.Connected
     ) {
+      this.setIsConnected();
       window.alert(MessageConstants.PLEASE_CONNECT_ALERT);
       return;
     }
 
     this.hubConnection &&
       this.hubConnection
-        .invoke(HubConstants.JOIN_GROUP_HUB_METHOD, this.groupName)
+        .invoke(HubConstants.JOIN_GROUP_HUB_METHOD, groupName)
         .then(() => {
-          this.connectedGroup = this.groupName;
-          this.connectedGroups.push(this.groupName);
-          this.groupName = '';
-
+          this.connectedGroups.push(groupName);
           this.cdr.detectChanges();
         });
   }
@@ -138,5 +123,11 @@ export class SelfHostedComponent implements OnInit {
     } else this.messages = [];
 
     this.cdr.detectChanges();
+  }
+
+  setIsConnected() {
+    this.isConnected = this.hubConnection
+      ? this.hubConnection.state == signalR.HubConnectionState.Connected
+      : false;
   }
 }

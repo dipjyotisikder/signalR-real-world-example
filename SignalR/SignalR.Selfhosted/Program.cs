@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using SignalR.Common.Constants;
 using SignalR.SelfHosted.Notification;
 using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Users.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddCors();
 
 builder.Services.AddScoped<IHubService, HubService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddSignalR();
 

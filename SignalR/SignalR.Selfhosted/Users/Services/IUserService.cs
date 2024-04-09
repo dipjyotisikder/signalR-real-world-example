@@ -1,0 +1,13 @@
+﻿using SignalR.SelfHosted.Users.Models;
+using System.Collections.Generic;
+
+namespace SignalR.SelfHosted.Users.Services;
+
+public interface IUserService
+{
+    IEnumerable<User> GetUsers();
+
+    User CreateUser(CreateUserRequest request);
+
+    User UpdateUser(UpdateUserRequest request);
+}

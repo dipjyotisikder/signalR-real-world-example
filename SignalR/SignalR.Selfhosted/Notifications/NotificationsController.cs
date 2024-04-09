@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SignalR.SelfHosted.Notification.Models;
 using SignalR.SelfHosted.Notification.Services;
 using System.Threading.Tasks;
 
@@ -14,6 +15,12 @@ public class NotificationsController : ControllerBase
     {
         _notificationService = notificationService;
         _hubService = hubService;
+    }
+
+    [HttpPost("groups")]
+    public IActionResult CreateGroups([FromBody] CreateGroupRequest request)
+    {
+        return Ok(_hubService.CreateGroup(request.GroupName));
     }
 
     [HttpGet("groups")]

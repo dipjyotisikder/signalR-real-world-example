@@ -1,22 +1,29 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using SignalR.SelfHosted.Notification.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
 public class NotificationHub : Hub
 {
-    private readonly IHubService _hubService;
-
-    public NotificationHub(IHubService hubService)
-    {
-        _hubService = hubService;
-    }
-
+    /// <summary>
+    /// Represents a Hub method to connect to a group.
+    /// </summary>
+    /// <param name="groupName">Group name.</param>
+    /// <returns>A task.</returns>
     public Task JoinGroup(string groupName)
     {
-        _hubService.CreateGroup(groupName);
         return Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+    }
+
+    /// <summary>
+    /// Represents a Hub method to connect to a group.
+    /// </summary>
+    /// <param name="groupName">Group name.</param>
+    /// <returns>A task.</returns>
+    public Task Broadcast(object data)
+    {
+        return Clients.All.SendAsync("Broadcast", data);
     }
 
     /// <summary>
@@ -38,7 +45,8 @@ public class NotificationHub : Hub
     /// <returns>A completed Task.</returns>
     public override Task OnDisconnectedAsync(Exception exception)
     {
-        ConnectionHandler.ConnectedIds.Remove(Context.ConnectionId);
+        if (ConnectionHandler.ConnectedIds.Any(x => x == Context.ConnectionId))
+            ConnectionHandler.ConnectedIds.Remove(Context.ConnectionId);
 
         return Task.WhenAll(
             Clients.All.SendAsync("ConnectedClientUpdated", ConnectionHandler.ConnectedIds.Count),
