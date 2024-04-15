@@ -1,43 +1,53 @@
 <div class="container chat-container">
   <div class="user-list">
-    <div class="user">
-      <img src="https://via.placeholder.com/40" alt="User Image" />
-      <span class="user-name">John Doe</span>
+    <div class="user" *ngFor="let user of userList">
+      <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
+      <span class="user-name">{{ user.fullName }}</span>
     </div>
-    <div class="user">
+    <!-- <div class="user">
       <img src="https://via.placeholder.com/40" alt="User Image" />
       <span class="user-name">Jane Smith</span>
-    </div>
+    </div> -->
   </div>
   <div class="chat-list">
     <div class="chat-header">
-      <h4 class="m-0">Chat App</h4>
+      <h4 class="m-0">Chat</h4>
     </div>
-    <div class="chat-body">
-      <div class="message sender-message">
-        <span class="sender">John Doe:</span> Hello Jane! How are you?
-        <span class="timestamp">10:00 AM</span>
+    <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
+      <div class="chat-body">
+        <div class="message">
+          <span class="sender">Jane Smith:</span> Hi John! I'm good, thank you.
+          How about you?
+          <span class="timestamp">10:02 AM</span>
+        </div>
+
+        <div *ngFor="let message of messageList">
+          <div class="message sender-message">
+            <span class="sender">{{
+              message.conversation?.creatorUser?.fullName ?? "Dipjyoti Sikder"
+            }}</span>
+            {{ message.text }}
+            <span class="timestamp">{{ message.createdAt | date }}</span>
+          </div>
+        </div>
+        <!-- <div class="message sender-message">
+          <span class="sender">John Doe:</span> I'm doing great, thanks for
+          asking!
+          <span class="timestamp">10:05 AM</span>
+        </div> -->
       </div>
-      <div class="message">
-        <span class="sender">Jane Smith:</span> Hi John! I'm good, thank you.
-        How about you?
-        <span class="timestamp">10:02 AM</span>
+      <div class="input-group">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="text"
+          autocomplete="off"
+          placeholder="Type your message..."
+        />
+        <button class="btn btn-primary" type="submit">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </div>
-      <div class="message sender-message">
-        <span class="sender">John Doe:</span> I'm doing great, thanks for
-        asking!
-        <span class="timestamp">10:05 AM</span>
-      </div>
-    </div>
-    <div class="input-group">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Type your message..."
-      />
-      <button class="btn btn-primary">
-        <i class="fas fa-paper-plane"></i>
-      </button>
-    </div>
+    </form>
   </div>
 </div>

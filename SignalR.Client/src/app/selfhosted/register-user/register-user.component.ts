@@ -7,7 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { SelfHostedService } from '../selfhosted.services';
-import { User } from 'src/app/models/User';
+import { UserModel } from 'src/app/models/UserModel';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register-user',
@@ -19,11 +20,12 @@ export class RegisterUserComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private selfHostedService: SelfHostedService
+    private selfHostedService: SelfHostedService,
+    private router: Router
   ) {
     this.userForm = this.formBuilder.group({
       fullName: new FormControl('', Validators.required),
-      photoUrl: new FormControl(this.selfHostedService.getRandomAvatarUrl()),
+      photoUrl: new FormControl(''),
     });
 
     // const fullNameControl = this.userForm.get('fullName');
@@ -35,18 +37,21 @@ export class RegisterUserComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.userForm.value);
-    console.log('this.userForm', this.userForm.valid);
-    console.log('this.userForm.fullName', this.userForm.get('fullName'));
-
     if (!this.userForm.valid) {
+      // this.userForm.controls['fullName'].markAsTouched();
+      this.userForm.markAllAsTouched();
       return;
     }
+
+    this.userForm.controls['photoUrl'].setValue(
+      this.selfHostedService.getRandomAvatarUrl()
+    );
 
     this.selfHostedService
       .createUser(this.userForm.value)
       .subscribe((success) => {
         this.userForm.reset();
+        this.router.navigate(['/selfhosted/messaging']);
       });
   }
 

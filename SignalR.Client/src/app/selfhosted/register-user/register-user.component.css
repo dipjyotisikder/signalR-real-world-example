@@ -1,5 +1,6 @@
 .container {
   margin-top: 5rem;
+  max-width: 800px;
 }
 
 .card {

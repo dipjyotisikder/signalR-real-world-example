@@ -52,12 +52,7 @@ public class MessageService : IMessageService
             .SendToGroupsAsync(
                 groups: messageAudiences.Select(x => x.AudienceUserId.ToString()).ToArray(),
                 eventName: HubEventName.Create("MessageCreated"),
-                payload: message);
-
-        foreach (var item in messageAudiences)
-        {
-            ;
-        }
+                payload: messageModel);
 
         return messageModel;
     }
@@ -67,7 +62,9 @@ public class MessageService : IMessageService
         var messageModel = (from message in _context.Messages
                             where message.Id == messageId
                             join conversation in _context.Conversations on message.ConversationId equals conversation.Id
-                            join user in _context.Users on conversation.CreatorUserId equals user.Id
+                            join user in _context.Users on conversation.CreatorUserId equals user.Id into creatorUsers
+                            from user in creatorUsers.DefaultIfEmpty()
+
                             select new MessageModel
                             {
                                 Id = message.Id,
@@ -78,7 +75,7 @@ public class MessageService : IMessageService
                                     Id = conversation.Id,
                                     Title = conversation.Title,
                                     CreatedAt = conversation.CreatedAt,
-                                    CreatorUser = new Users.Models.UserModel
+                                    CreatorUser = user == null ? null : new Users.Models.UserModel
                                     {
                                         Id = user.Id,
                                         FullName = user.FullName,

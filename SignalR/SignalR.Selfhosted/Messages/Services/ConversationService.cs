@@ -1,4 +1,5 @@
 ﻿using SignalR.SelfHosted.Messages.Models;
+using SignalR.SelfHosted.Users.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ public class ConversationService : IConversationService
         _context = context;
     }
 
-    public Conversation Create(CreateConversationRequest request)
+    public ConversationModel Create(CreateConversationRequest request)
     {
         var conversation = new Conversation
         {
@@ -25,19 +26,38 @@ public class ConversationService : IConversationService
         };
 
         _context.Conversations.Add(conversation);
-        return conversation;
+
+        var creatorUser = _context.Users
+            .Where(x => x.Id == conversation.CreatorUserId)
+            .Select(x => new UserModel
+            {
+                Id = x.Id,
+                FullName = x.FullName,
+                PhotoUrl = x.PhotoUrl,
+                OnLine = x.OnLine
+            }).FirstOrDefault();
+
+        return new ConversationModel
+        {
+            Id = conversation.Id,
+            CreatedAt = conversation.CreatedAt,
+            Title = conversation.Title,
+            CreatorUser = creatorUser
+        };
     }
 
     public IEnumerable<ConversationModel> GetAll()
     {
         return from c in _context.Conversations
-               join cu in _context.Users on c.CreatorUserId equals cu.Id
+               join cu in _context.Users
+               on c.CreatorUserId equals cu.Id into creatorUsers
+               from cu in creatorUsers.DefaultIfEmpty()
                select new ConversationModel
                {
                    Id = c.Id,
                    Title = c.Title,
                    CreatedAt = c.CreatedAt,
-                   CreatorUser = new Users.Models.UserModel
+                   CreatorUser = cu == null ? null : new UserModel
                    {
                        Id = cu.Id,
                        FullName = cu.FullName,
@@ -55,7 +75,7 @@ public class ConversationService : IConversationService
                         join cu in _context.Users on c.CreatorUserId equals cu.Id
                         select new ConversationAudienceModel
                         {
-                            AudienceUser = new Users.Models.UserModel
+                            AudienceUser = new UserModel
                             {
                                 Id = au.Id,
                                 OnLine = au.OnLine,
@@ -67,7 +87,7 @@ public class ConversationService : IConversationService
                                 Id = c.Id,
                                 CreatedAt = c.CreatedAt,
                                 Title = c.Title,
-                                CreatorUser = new Users.Models.UserModel
+                                CreatorUser = new UserModel
                                 {
                                     Id = cu.Id,
                                     FullName = cu.FullName,
@@ -84,7 +104,8 @@ public class ConversationService : IConversationService
     {
         var messages = from m in _context.Messages.Where(x => x.ConversationId == conversationId)
                        join c in _context.Conversations on m.ConversationId equals c.Id
-                       join cu in _context.Users on c.CreatorUserId equals cu.Id
+                       join cu in _context.Users on c.CreatorUserId equals cu.Id into creatorUsers
+                       from cu in creatorUsers.DefaultIfEmpty()
                        select new MessageModel
                        {
                            Id = m.Id,
@@ -95,7 +116,7 @@ public class ConversationService : IConversationService
                                Id = c.Id,
                                CreatedAt = c.CreatedAt,
                                Title = c.Title,
-                               CreatorUser = new Users.Models.UserModel
+                               CreatorUser = cu == null ? null : new UserModel
                                {
                                    Id = cu.Id,
                                    FullName = cu.FullName,

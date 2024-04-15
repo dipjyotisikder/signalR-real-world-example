@@ -11,5 +11,5 @@ public interface IConversationService
 
     IEnumerable<ConversationAudienceModel> GetAudiences(int conversationId);
 
-    Conversation Create(CreateConversationRequest request);
+    ConversationModel Create(CreateConversationRequest request);
 }

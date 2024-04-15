@@ -3,7 +3,12 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { selfHostedConstants } from '../constants/selfhosted-constants';
 import * as signalR from '@microsoft/signalr';
-import { User } from '../models/User';
+import { UserModel } from '../models/UserModel';
+import {
+  ConversationCreateModel,
+  ConversationModel,
+} from '../models/ConversationModel';
+import { MessageCreateModel, MessageModel } from '../models/MessageModel';
 
 @Injectable({
   providedIn: 'root',
@@ -20,19 +25,53 @@ export class SelfHostedService {
   }
 
   getUsers() {
-    return this.http.get<User[]>(
+    return this.http.get<UserModel[]>(
       environment.selfHostedServerURL +
         '/' +
         selfHostedConstants.GET_USERS_ENDPOINT
     );
   }
 
-  createUser(user: User) {
-    return this.http.post<User>(
+  createUser(user: UserModel) {
+    return this.http.post<UserModel>(
       environment.selfHostedServerURL +
         '/' +
         selfHostedConstants.CREATE_USERS_ENDPOINT,
       user
+    );
+  }
+
+  getConversations() {
+    return this.http.get<ConversationModel[]>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.GET_CONVERSATIONS_ENDPOINT
+    );
+  }
+
+  createConversation(payload: ConversationCreateModel) {
+    return this.http.post<ConversationModel>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.GET_CONVERSATIONS_ENDPOINT,
+      payload
+    );
+  }
+
+  getMessages(conversationId: number) {
+    return this.http.get<MessageModel[]>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.GET_MESSAGES_ENDPOINT(conversationId)
+    );
+  }
+
+  createMessage(payload: MessageCreateModel) {
+    return this.http.post<MessageModel>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.CREATE_MESSAGE_ENDPOINT(payload.conversationId),
+      payload
     );
   }
 

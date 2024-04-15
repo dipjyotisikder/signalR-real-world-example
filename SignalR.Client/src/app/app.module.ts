@@ -10,6 +10,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MessageBoxComponent } from './selfhosted/message-box/message-box.component';
 import { RegisterUserComponent } from './selfhosted/register-user/register-user.component';
+import { MessageConversationComponent } from './selfhosted/message-conversation/message-conversation.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   imports: [
@@ -20,6 +22,7 @@ import { RegisterUserComponent } from './selfhosted/register-user/register-user.
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    RouterModule,
   ],
 
   declarations: [
@@ -28,6 +31,7 @@ import { RegisterUserComponent } from './selfhosted/register-user/register-user.
     SelfHostedComponent,
     MessageBoxComponent,
     RegisterUserComponent,
+    MessageConversationComponent,
   ],
 
   bootstrap: [AppComponent],

@@ -1,0 +1,44 @@
+.conversation-container {
+  max-width: 800px;
+  margin: 50px auto;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+  /* display: flex; */
+}
+
+.conversation-list {
+  flex: 1;
+  /* border-right: 1px solid #ced4da; */
+  max-width: 100%;
+  overflow-y: auto;
+}
+
+.conversation-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ced4da;
+  cursor: pointer;
+}
+
+.conversation-item img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.conversation-item:last-child {
+  border-bottom: 0px;
+}
+
+.conversation-title {
+  font-weight: bold;
+}
+
+/* Update Default Class */
+.mb-3 {
+  margin-top: 1rem !important;
+}
