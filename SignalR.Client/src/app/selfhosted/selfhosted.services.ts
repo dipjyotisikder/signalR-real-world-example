@@ -15,7 +15,7 @@ export class SelfHostedService {
     return this.http.get<string[]>(
       environment.selfHostedServerURL +
         '/' +
-        selfHostedConstants.CREATE_GROUP_ENDPOINT
+        selfHostedConstants.CREATE_CONVERSATION_ENDPOINT
     );
   }
 
@@ -24,6 +24,15 @@ export class SelfHostedService {
       environment.selfHostedServerURL +
         '/' +
         selfHostedConstants.GET_USERS_ENDPOINT
+    );
+  }
+
+  createUser(user: User) {
+    return this.http.post<User>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.CREATE_USERS_ENDPOINT,
+      user
     );
   }
 

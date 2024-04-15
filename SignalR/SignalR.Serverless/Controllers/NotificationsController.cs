@@ -36,7 +36,7 @@ namespace SignalR.ServerLess.Controllers
         public async Task<IActionResult> SendAll()
         {
             await _serviceHubContext.Clients.All
-                .SendCoreAsync(Constants.NotificationCreatedEvent,
+                .SendCoreAsync(AzureHubConstants.NotificationCreatedEvent,
                     new object[]{
                         new NotificationMessageModel
                         {
@@ -54,7 +54,7 @@ namespace SignalR.ServerLess.Controllers
         {
             await _serviceHubContext.Clients
                 .Group(groupName)
-                .SendCoreAsync(Constants.NotificationCreatedEvent,
+                .SendCoreAsync(AzureHubConstants.NotificationCreatedEvent,
                     new object[]{
                         new NotificationMessageModel
                         {

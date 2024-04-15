@@ -1,11 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using SignalR.SelfHosted.Users.Services;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
-public class NotificationHub : Hub
+public class ApplicationHub : Hub
 {
+    private readonly IUserService _userService;
+    public ApplicationHub(IUserService userService)
+    {
+        _userService = userService;
+    }
+
     /// <summary>
     /// Represents a Hub method to connect to a group.
     /// </summary>
@@ -17,25 +23,15 @@ public class NotificationHub : Hub
     }
 
     /// <summary>
-    /// Represents a Hub method to connect to a group.
-    /// </summary>
-    /// <param name="groupName">Group name.</param>
-    /// <returns>A task.</returns>
-    public Task Broadcast(object data)
-    {
-        return Clients.All.SendAsync("Broadcast", data);
-    }
-
-    /// <summary>
     /// Automatically called when connected.
     /// </summary>
     /// <returns>A completed Task.</returns>
     public override Task OnConnectedAsync()
     {
-        ConnectionHandler.ConnectedIds.Add(Context.ConnectionId);
-        return Task.WhenAll(
-            Clients.All.SendAsync("ConnectedClientUpdated", ConnectionHandler.ConnectedIds.Count),
-            base.OnConnectedAsync());
+        var userId = 1;
+
+        _userService.OnLineUser(true, userId);
+        return base.OnConnectedAsync();
     }
 
     /// <summary>
@@ -45,11 +41,7 @@ public class NotificationHub : Hub
     /// <returns>A completed Task.</returns>
     public override Task OnDisconnectedAsync(Exception exception)
     {
-        if (ConnectionHandler.ConnectedIds.Any(x => x == Context.ConnectionId))
-            ConnectionHandler.ConnectedIds.Remove(Context.ConnectionId);
-
         return Task.WhenAll(
-            Clients.All.SendAsync("ConnectedClientUpdated", ConnectionHandler.ConnectedIds.Count),
             Clients.All.SendAsync("ExceptionOccured", exception?.Message),
             base.OnDisconnectedAsync(exception));
     }

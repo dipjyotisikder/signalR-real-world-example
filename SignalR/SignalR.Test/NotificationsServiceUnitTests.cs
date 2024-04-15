@@ -8,11 +8,11 @@ namespace SignalR.SelfHosted.UnitTests
 {
     public class NotificationsServiceUnitTests
     {
-        private readonly Mock<IHubContext<NotificationHub>> _hubContext;
+        private readonly Mock<IHubContext<ApplicationHub>> _hubContext;
 
         public NotificationsServiceUnitTests()
         {
-            _hubContext = new Mock<IHubContext<NotificationHub>>();
+            _hubContext = new Mock<IHubContext<ApplicationHub>>();
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace SignalR.SelfHosted.UnitTests
             _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
 
             // Act
-            var notificationService = new NotificationService(_hubContext.Object);
+            var notificationService = new HubService(_hubContext.Object);
             var result = async () => await notificationService.SendToAllAsync();
 
             // Assert
@@ -64,7 +64,7 @@ namespace SignalR.SelfHosted.UnitTests
             _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
 
             // Act
-            var notificationService = new NotificationService(_hubContext.Object);
+            var notificationService = new HubService(_hubContext.Object);
             var result = async () => await notificationService.SendToGroupAsync(groupName);
 
             // Assert

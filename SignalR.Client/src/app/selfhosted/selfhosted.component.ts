@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { HubConstants, MessageConstants } from '../Constants';
 import { NotificationMessage } from '../models/NotificationMessage';
@@ -13,7 +8,6 @@ import { SelfHostedService } from './selfhosted.services';
   selector: 'app-selfhosted',
   templateUrl: './selfhosted.component.html',
   styleUrls: ['./selfhosted.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelfHostedComponent implements OnInit {
   // HUB CONFIGURATION
@@ -29,11 +23,11 @@ export class SelfHostedComponent implements OnInit {
 
   constructor(
     public cdr: ChangeDetectorRef,
-    public service: SelfHostedService
+    public selfHostedService: SelfHostedService
   ) {}
 
   ngOnInit() {
-    this.service.getGroups().subscribe((success) => {
+    this.selfHostedService.getGroups().subscribe((success) => {
       this.availableGroups = success;
     });
 
@@ -41,7 +35,7 @@ export class SelfHostedComponent implements OnInit {
   }
 
   connectToSignalR() {
-    this.hubConnection = this.service.buildHubConnection();
+    this.hubConnection = this.selfHostedService.buildHubConnection();
     this.hubConnection
       .start()
       .then(() => {

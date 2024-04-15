@@ -1,0 +1,28 @@
+<div class="container">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h3 class="card-title m-0">Add New User</h3>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="fullName" class="form-label">Full Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="fullName"
+            formControlName="fullName"
+          />
+        </div>
+        <!-- <div *ngIf="userForm?.invalid" class="text-danger"> -->
+        <div *ngIf="userForm?.invalid && userForm?.touched" class="text-danger">
+          <!-- <div> -->
+          <div *ngIf="userForm.get('fullName')?.hasError">
+            Full Name is required
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>

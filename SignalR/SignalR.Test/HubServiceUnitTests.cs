@@ -12,7 +12,7 @@ namespace SignalR.SelfHosted.UnitTests
             string groupName = "";
 
             // Act
-            var hubService = new HubService();
+            var hubService = new ConversationService();
             var result = hubService.CreateGroup(groupName);
 
             // Assert
@@ -24,7 +24,7 @@ namespace SignalR.SelfHosted.UnitTests
         public void GetGroups_ReturnsOk()
         {
             // Act
-            var hubService = new HubService();
+            var hubService = new ConversationService();
             var result = hubService.GetGroups();
 
             // Assert

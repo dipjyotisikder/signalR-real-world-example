@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using SignalR.SelfHosted.Notifications.Services;
+using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Notification.Services
+namespace SignalR.SelfHosted.Notification.Services;
+
+public interface IHubService
 {
-    public interface IHubService
-    {
-        HashSet<string> GetGroups();
+    Task SendToAllAsync<T>(HubEventName eventName, T payload);
 
-        HashSet<string> CreateGroup(string groupName);
-    }
+    Task SendToGroupsAsync<T>(string[] groups, HubEventName eventName, T payload);
 }

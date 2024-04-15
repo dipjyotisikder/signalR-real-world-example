@@ -10,18 +10,16 @@ using SignalR.Common.Constants;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// REGISTER AZURE SIGNALR
 builder.Services
-    .AddSingleton<ServiceHubContext>(new ServiceManagerBuilder()
+    .AddSingleton(new ServiceManagerBuilder()
     .WithOptions(option =>
     {
-        option.ConnectionString = builder.Configuration.GetConnectionString(Constants.AzureSignalRConnectionKey);
+        option.ConnectionString = builder.Configuration.GetConnectionString(AzureHubConstants.AzureSignalRConnectionKey);
 
         option.UseJsonObjectSerializer(new NewtonsoftJsonObjectSerializer(new JsonSerializerSettings
         {
@@ -29,11 +27,12 @@ builder.Services
         }));
     })
     .BuildServiceManager()
-    .CreateHubContextAsync(Constants.NotificationHubName, default)
+    .CreateHubContextAsync(AzureHubConstants.HubName, default)
     .ConfigureAwait(false)
     .GetAwaiter()
     .GetResult());
 
+// PIPELINE
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
