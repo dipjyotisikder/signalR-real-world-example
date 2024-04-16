@@ -1,10 +1,9 @@
 ﻿using SignalR.SelfHosted.Users.Models;
+using System.Collections.Generic;
 
 namespace SignalR.SelfHosted.Messages.Models;
 
-public class ConversationAudienceModel
+public class ConversationAudienceModel : ConversationModel
 {
-    public ConversationModel Conversation { get; set; }
-
-    public UserModel AudienceUser { get; set; }
+    public IEnumerable<UserModel> AudienceUsers { get; set; }
 }

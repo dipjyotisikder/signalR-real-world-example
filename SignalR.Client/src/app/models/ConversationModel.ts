@@ -11,3 +11,7 @@ export interface ConversationCreateModel {
   title: string;
   creatorUserId: number;
 }
+
+export interface ConversationAudienceModel extends ConversationModel {
+  audienceUsers: UserModel[];
+}

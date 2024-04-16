@@ -27,9 +27,9 @@ export class SelfHostedComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.selfHostedService.getGroups().subscribe((success) => {
-      this.availableGroups = success;
-    });
+    // this.selfHostedService.getGroups().subscribe((success) => {
+    //   this.availableGroups = success;
+    // });
 
     this.connectToSignalR();
   }

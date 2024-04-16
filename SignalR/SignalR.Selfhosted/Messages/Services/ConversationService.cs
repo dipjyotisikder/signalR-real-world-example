@@ -27,6 +27,12 @@ public class ConversationService : IConversationService
 
         _context.Conversations.Add(conversation);
 
+        _context.ConversationAudiences.Add(new ConversationAudience
+        {
+            ConversationId = conversation.Id,
+            AudienceUserId = request.CreatorUserId
+        });
+
         var creatorUser = _context.Users
             .Where(x => x.Id == conversation.CreatorUserId)
             .Select(x => new UserModel
@@ -67,37 +73,42 @@ public class ConversationService : IConversationService
                };
     }
 
-    public IEnumerable<ConversationAudienceModel> GetAudiences(int conversationId)
+    public ConversationAudienceModel GetAudiences(int conversationId)
     {
+        var conversation = _context.Conversations.FirstOrDefault(x => x.Id == conversationId);
+        if (conversation == null)
+        {
+            return null;
+        }
+
         var audiences = from ca in _context.ConversationAudiences.Where(x => x.ConversationId == conversationId)
                         join au in _context.Users on ca.AudienceUserId equals au.Id
-                        join c in _context.Conversations on ca.ConversationId equals c.Id
-                        join cu in _context.Users on c.CreatorUserId equals cu.Id
-                        select new ConversationAudienceModel
+                        select new UserModel
                         {
-                            AudienceUser = new UserModel
-                            {
-                                Id = au.Id,
-                                OnLine = au.OnLine,
-                                FullName = au.FullName,
-                                PhotoUrl = au.PhotoUrl,
-                            },
-                            Conversation = new ConversationModel
-                            {
-                                Id = c.Id,
-                                CreatedAt = c.CreatedAt,
-                                Title = c.Title,
-                                CreatorUser = new UserModel
-                                {
-                                    Id = cu.Id,
-                                    FullName = cu.FullName,
-                                    OnLine = cu.OnLine,
-                                    PhotoUrl = cu.PhotoUrl,
-                                }
-                            }
+                            Id = au.Id,
+                            OnLine = au.OnLine,
+                            FullName = au.FullName,
+                            PhotoUrl = au.PhotoUrl,
                         };
 
-        return audiences;
+        var creatorUser = _context.Users
+            .Where(x => x.Id == conversation.CreatorUserId)
+            .Select(x => new UserModel
+            {
+                Id = x.Id,
+                FullName = x.FullName,
+                OnLine = x.OnLine,
+                PhotoUrl = x.PhotoUrl,
+            }).FirstOrDefault();
+
+        return new ConversationAudienceModel
+        {
+            Id = conversation.Id,
+            Title = conversation.Title,
+            CreatedAt = conversation.CreatedAt,
+            CreatorUser = creatorUser,
+            AudienceUsers = audiences ?? Enumerable.Empty<UserModel>()
+        };
     }
 
     public IEnumerable<MessageModel> GetMessages(int conversationId)

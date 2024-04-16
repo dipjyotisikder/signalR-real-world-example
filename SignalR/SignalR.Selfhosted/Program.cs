@@ -9,6 +9,7 @@ using SignalR.SelfHosted.Messages.Services;
 using SignalR.SelfHosted.Notification;
 using SignalR.SelfHosted.Notification.Services;
 using SignalR.SelfHosted.Users.Services;
+using System;
 using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -29,11 +30,14 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
-        ValidateAudience = false,
+        ValidateIssuer = true,
+        ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SuperSecretKey"))
+        ValidIssuer = AuthenticationConstants.ISSUER,
+        ValidAudience = AuthenticationConstants.AUDIENCE,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationConstants.TOKEN_SECRET_KEY)),
+        ClockSkew = TimeSpan.Zero
     };
 });
 builder.Services.AddAuthorization();

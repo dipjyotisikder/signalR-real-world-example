@@ -6,5 +6,5 @@ public class MessageAudience
 
     public int AudienceUserId { get; set; }
 
-    public bool Seen { get; set; }
+    public bool Seen { get; set; } = false;
 }

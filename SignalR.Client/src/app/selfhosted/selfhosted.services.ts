@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { selfHostedConstants } from '../constants/selfhosted-constants';
 import * as signalR from '@microsoft/signalr';
-import { UserModel } from '../models/UserModel';
+import { UserModel, UserTokenModel } from '../models/UserModel';
 import {
+  ConversationAudienceModel,
   ConversationCreateModel,
   ConversationModel,
 } from '../models/ConversationModel';
@@ -33,7 +34,7 @@ export class SelfHostedService {
   }
 
   createUser(user: UserModel) {
-    return this.http.post<UserModel>(
+    return this.http.post<UserTokenModel>(
       environment.selfHostedServerURL +
         '/' +
         selfHostedConstants.CREATE_USERS_ENDPOINT,
@@ -55,6 +56,14 @@ export class SelfHostedService {
         '/' +
         selfHostedConstants.GET_CONVERSATIONS_ENDPOINT,
       payload
+    );
+  }
+
+  getConversationAudiences(conversationId: number) {
+    return this.http.get<ConversationAudienceModel>(
+      environment.selfHostedServerURL +
+        '/' +
+        selfHostedConstants.GET_AUDIENCES_ENDPOINT(conversationId)
     );
   }
 

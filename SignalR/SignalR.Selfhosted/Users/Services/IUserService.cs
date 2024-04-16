@@ -8,7 +8,7 @@ public interface IUserService
 {
     IEnumerable<User> GetUsers();
 
-    User CreateUser(CreateUserRequest request);
+    TokenModel CreateUser(CreateUserRequest request);
 
     User UpdateUser(UpdateUserRequest request);
 

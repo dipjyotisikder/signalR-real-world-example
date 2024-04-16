@@ -9,6 +9,7 @@ import {
 import { SelfHostedService } from '../selfhosted.services';
 import { UserModel } from 'src/app/models/UserModel';
 import { Router } from '@angular/router';
+import { AuthService } from '../selfhosted.auth.service';
 
 @Component({
   selector: 'app-register-user',
@@ -20,8 +21,9 @@ export class RegisterUserComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private router: Router,
     private selfHostedService: SelfHostedService,
-    private router: Router
+    private authService: AuthService
   ) {
     this.userForm = this.formBuilder.group({
       fullName: new FormControl('', Validators.required),
@@ -50,7 +52,11 @@ export class RegisterUserComponent implements OnInit {
     this.selfHostedService
       .createUser(this.userForm.value)
       .subscribe((success) => {
+        // console.log('create user response', success);
+
         this.userForm.reset();
+        this.authService.setToken(success.accessToken);
+
         this.router.navigate(['/selfhosted/messaging']);
       });
   }

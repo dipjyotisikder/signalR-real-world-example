@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MessageModel } from 'src/app/models/MessageModel';
+import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
 
 @Component({
   selector: 'app-message-box',
@@ -17,6 +18,7 @@ import { MessageModel } from 'src/app/models/MessageModel';
 })
 export class MessageBoxComponent implements OnInit {
   userList: UserModel[] = [];
+  conversationAudience: ConversationAudienceModel | null = null;
   messageList: MessageModel[] = [];
   messageForm: FormGroup;
 
@@ -32,14 +34,18 @@ export class MessageBoxComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.service.getUsers().subscribe((success) => {
-      this.userList.push(...success);
-    });
-
     this.route.params.subscribe((routeData) => {
-      // console.log('routeData', routeData);
-      this.messageForm.controls['conversationId'].setValue(+routeData['id']);
-      this.service.getMessages(routeData['id']).subscribe((success) => {
+      const conversationId = +routeData['id'];
+
+      this.messageForm.controls['conversationId'].setValue(conversationId);
+
+      this.service
+        .getConversationAudiences(conversationId)
+        .subscribe((success) => {
+          this.conversationAudience = success;
+        });
+
+      this.service.getMessages(conversationId).subscribe((success) => {
         this.messageList.push(...success);
       });
     });

@@ -1,6 +1,6 @@
 <div class="container chat-container">
-  <div class="user-list">
-    <div class="user" *ngFor="let user of userList">
+  <div class="user-list" *ngIf="conversationAudience">
+    <div class="user" *ngFor="let user of conversationAudience.audienceUsers">
       <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
       <span class="user-name">{{ user.fullName }}</span>
     </div>
@@ -25,7 +25,7 @@
           <div class="message sender-message">
             <span class="sender">{{
               message.conversation?.creatorUser?.fullName ?? "Dipjyoti Sikder"
-            }}</span>
+              }}</span>
             {{ message.text }}
             <span class="timestamp">{{ message.createdAt | date }}</span>
           </div>
@@ -37,13 +37,8 @@
         </div> -->
       </div>
       <div class="input-group">
-        <input
-          type="text"
-          class="form-control"
-          formControlName="text"
-          autocomplete="off"
-          placeholder="Type your message..."
-        />
+        <input type="text" class="form-control" formControlName="text" autocomplete="off"
+          placeholder="Type your message..." />
         <button class="btn btn-primary" type="submit">
           <i class="fas fa-paper-plane"></i>
         </button>

@@ -26,7 +26,7 @@
   border-color: #007bff;
 }
 
-.form-check-input:checked + .form-check-label {
+.form-check-input:checked+.form-check-label {
   color: #007bff;
 }
 

@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SignalR.SelfHosted.Messages.Models;
 using SignalR.SelfHosted.Messages.Services;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
+
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class MessagingController : ControllerBase

@@ -38,11 +38,11 @@ public class MessageService : IMessageService
         // ADD USERS FROM CURRENT CONVERSATION
         var messageAudiences = _conversationService
             .GetAudiences(request.ConversationId)
+            .AudienceUsers
             .Select(x => new MessageAudience
             {
                 MessageId = message.Id,
-                AudienceUserId = x.AudienceUser.Id,
-                Seen = false
+                AudienceUserId = x.Id
             });
         _context.MessageAudiences.AddRange(messageAudiences);
 

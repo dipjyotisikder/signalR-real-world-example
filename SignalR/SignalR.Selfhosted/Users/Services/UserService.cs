@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
+using SignalR.Common.Constants;
 using SignalR.SelfHosted.Notification;
 using SignalR.SelfHosted.Users.Models;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Users.Services;
@@ -19,7 +25,7 @@ public class UserService : IUserService
         _context = context;
     }
 
-    public User CreateUser(CreateUserRequest request)
+    public TokenModel CreateUser(CreateUserRequest request)
     {
         var user = new User
         {
@@ -29,7 +35,7 @@ public class UserService : IUserService
         };
         _context.Users.Add(user);
 
-        return user;
+        return PrepareToken(user);
     }
 
     public IEnumerable<User> GetUsers()
@@ -72,5 +78,40 @@ public class UserService : IUserService
         user.OnLine = request.Active;
 
         return user;
+    }
+
+    public TokenModel GenerateUserToken(CreateUserTokenRequest request)
+    {
+        var user = _context.Users.Where(x => x.FullName == request.FullName).FirstOrDefault();
+        if (user == null)
+        {
+            return null;
+        }
+
+        return PrepareToken(user);
+    }
+
+    private static TokenModel PrepareToken(User user)
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationConstants.TOKEN_SECRET_KEY));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: AuthenticationConstants.ISSUER,
+            audience: AuthenticationConstants.AUDIENCE,
+            claims: new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.FullName)
+            },
+            expires: DateTime.UtcNow.AddMinutes(60),
+            signingCredentials: credentials
+        );
+
+        return new TokenModel
+        {
+            AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+            FullName = user.FullName,
+        };
     }
 }

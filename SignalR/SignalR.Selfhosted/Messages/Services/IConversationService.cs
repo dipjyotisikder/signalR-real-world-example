@@ -9,7 +9,7 @@ public interface IConversationService
 
     IEnumerable<MessageModel> GetMessages(int conversationId);
 
-    IEnumerable<ConversationAudienceModel> GetAudiences(int conversationId);
+    ConversationAudienceModel GetAudiences(int conversationId);
 
     ConversationModel Create(CreateConversationRequest request);
 }
