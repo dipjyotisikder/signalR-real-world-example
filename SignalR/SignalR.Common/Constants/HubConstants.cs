@@ -8,6 +8,23 @@
         /// <summary>
         /// Self-hosted SignalR hub endpoint.
         /// </summary>
-        public const string HubEndpoint = "/signalR/applicationHub";
+        public const string HUB_ENDPOINT = "/signalR/applicationHub";
+
+        /// <summary>
+        /// Represents a class to keep event key.
+        /// </summary>
+        public static class Events
+        {
+            /// <summary>
+            /// Represents a Hub event for users onLine status.
+            /// </summary>
+            public const string USER_IS_ONLINE = "UserIsOnLine";
+
+            /// <summary>
+            /// Represents a Hub event for users message creation.
+            /// </summary>
+            public const string MESSAGE_IS_CREATED = "MessageIsCreated";
+        }
+
     }
 }

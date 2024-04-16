@@ -33,4 +33,9 @@ public interface IDataContext
     /// Provides all the message audiences.
     /// </summary>
     List<MessageAudience> MessageAudiences { get; set; }
+
+    /// <summary>
+    /// Provides all the tokens.
+    /// </summary>
+    List<Token> Tokens { get; set; }
 }

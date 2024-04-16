@@ -32,4 +32,10 @@ public class UsersController : ControllerBase
     {
         return Ok(_userService.UpdateUser(request));
     }
+
+    [HttpPost("refreshToken")]
+    public IActionResult RefreshToken([FromBody] RefreshUserTokenRequest request)
+    {
+        return Ok(_userService.RefreshUserToken(request));
+    }
 }

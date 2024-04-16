@@ -17,6 +17,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
@@ -41,7 +43,8 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
-builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddSingleton<IDataContext, DataContext>();
 builder.Services.AddScoped<IHubService, HubService>();
@@ -67,6 +70,7 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials());
+
 app.UseRouting();
 
 app.UseMiddleware<HubMiddleWare>();
@@ -77,6 +81,6 @@ app.UseAuthorization();
 app.UseWebSockets();
 app.MapControllers();
 
-app.MapHub<ApplicationHub>(HubConstants.HubEndpoint);
+app.MapHub<ApplicationHub>(HubConstants.HUB_ENDPOINT);
 
 app.Run();

@@ -1,5 +1,6 @@
 ﻿using SignalR.SelfHosted.Messages.Models;
 using SignalR.SelfHosted.Users.Models;
+using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,24 @@ namespace SignalR.SelfHosted.Messages.Services;
 public class ConversationService : IConversationService
 {
     private readonly IDataContext _context;
+    private readonly ICurrentUser _currentUser;
 
-    public ConversationService(IDataContext context)
+    public ConversationService(IDataContext context, ICurrentUser currentUser)
     {
         _context = context;
+        _currentUser = currentUser;
     }
 
     public ConversationModel Create(CreateConversationRequest request)
     {
+        var currentUserId = _currentUser.Id;
+
         var conversation = new Conversation
         {
             Id = _context.Conversations.Count + 1,
             CreatedAt = DateTime.UtcNow,
             Title = request.Title,
-            CreatorUserId = request.CreatorUserId,
+            CreatorUserId = currentUserId,
         };
 
         _context.Conversations.Add(conversation);
@@ -30,7 +35,7 @@ public class ConversationService : IConversationService
         _context.ConversationAudiences.Add(new ConversationAudience
         {
             ConversationId = conversation.Id,
-            AudienceUserId = request.CreatorUserId
+            AudienceUserId = currentUserId
         });
 
         var creatorUser = _context.Users
@@ -79,6 +84,18 @@ public class ConversationService : IConversationService
         if (conversation == null)
         {
             return null;
+        }
+
+        // ADD CURRENT USER TO CONVERSATION
+        var currentUserId = _currentUser.Id;
+        var isAnAudience = _context.ConversationAudiences.Where(x => x.AudienceUserId == currentUserId && x.ConversationId == conversation.Id).Any();
+        if (!isAnAudience)
+        {
+            _context.ConversationAudiences.Add(new ConversationAudience
+            {
+                AudienceUserId = currentUserId,
+                ConversationId = conversation.Id
+            });
         }
 
         var audiences = from ca in _context.ConversationAudiences.Where(x => x.ConversationId == conversationId)

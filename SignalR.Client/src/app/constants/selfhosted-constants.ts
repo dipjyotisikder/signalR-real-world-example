@@ -19,5 +19,7 @@ export const selfHostedConstants = {
   CREATE_USERS_ENDPOINT: 'users',
   UPDATE_USERS_ENDPOINT: 'users',
 
+  REFRESH_TOKEN_ENDPOINT: 'users/refreshToken',
+
   SIGNALR_ENDPOINT: 'signalR/applicationHub',
 };

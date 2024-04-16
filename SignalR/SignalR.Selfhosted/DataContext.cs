@@ -33,4 +33,9 @@ public class DataContext : IDataContext
     /// Provides all the message audiences.
     /// </summary>
     public List<MessageAudience> MessageAudiences { get; set; } = new List<MessageAudience>();
+
+    /// <summary>
+    /// Provides all the tokens.
+    /// </summary>
+    public List<Token> Tokens { get; set; } = new List<Token>();
 }

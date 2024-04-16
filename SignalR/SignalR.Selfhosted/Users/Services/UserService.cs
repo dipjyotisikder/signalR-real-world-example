@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using SignalR.Common.Constants;
-using SignalR.SelfHosted.Notification;
+using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Notifications.Services;
 using SignalR.SelfHosted.Users.Models;
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,12 @@ namespace SignalR.SelfHosted.Users.Services;
 public class UserService : IUserService
 {
     private readonly IDataContext _context;
+    private readonly IHubService _hubService;
 
-    private readonly IHubContext<ApplicationHub> _hubContext;
-
-    public UserService(IHubContext<ApplicationHub> hubContext, IDataContext context)
+    public UserService(IDataContext context, IHubService hubService)
     {
-        _hubContext = hubContext;
         _context = context;
+        _hubService = hubService;
     }
 
     public TokenModel CreateUser(CreateUserRequest request)
@@ -35,7 +34,17 @@ public class UserService : IUserService
         };
         _context.Users.Add(user);
 
-        return PrepareToken(user);
+        var refreshToken = Guid.NewGuid().ToString();
+        var token = new Token
+        {
+            RefreshToken = refreshToken,
+            TokenUserId = user.Id,
+        };
+        token.SetDefaultExpiryDate();
+
+        _context.Tokens.Add(token);
+
+        return PrepareToken(user, refreshToken);
     }
 
     public IEnumerable<User> GetUsers()
@@ -56,13 +65,13 @@ public class UserService : IUserService
             .Select(x => x.ConversationId).Distinct();
 
         var audienceUserIds = _context.ConversationAudiences
-                    .Where(x => conversationIds.Contains(x.ConversationId))
-                    .Select(x => x.AudienceUserId).Distinct();
+            .Where(x => conversationIds.Contains(x.ConversationId))
+            .Select(x => x.AudienceUserId.ToString()).Distinct();
 
-        foreach (var audienceUserId in audienceUserIds)
-        {
-            await _hubContext.Clients.Group(audienceUserId.ToString()).SendAsync("UserOnLine", userId);
-        }
+        await _hubService.SendToGroupsAsync(
+            groups: audienceUserIds,
+            eventName: HubEventName.Create(HubConstants.Events.USER_IS_ONLINE),
+            userId);
     }
 
     public User UpdateUser(UpdateUserRequest request)
@@ -80,18 +89,29 @@ public class UserService : IUserService
         return user;
     }
 
-    public TokenModel GenerateUserToken(CreateUserTokenRequest request)
+    public TokenModel RefreshUserToken(RefreshUserTokenRequest request)
     {
-        var user = _context.Users.Where(x => x.FullName == request.FullName).FirstOrDefault();
+        var token = _context.Tokens.FirstOrDefault(x => x.RefreshToken == request.RefreshToken);
+        if (token == null)
+        {
+            return null;
+        }
+
+        var user = _context.Users.FirstOrDefault(x => x.Id == token.TokenUserId);
         if (user == null)
         {
             return null;
         }
 
-        return PrepareToken(user);
+        var refreshToken = Guid.NewGuid().ToString();
+
+        token.RefreshToken = refreshToken;
+        token.SetDefaultExpiryDate();
+
+        return PrepareToken(user, refreshToken);
     }
 
-    private static TokenModel PrepareToken(User user)
+    private static TokenModel PrepareToken(User user, string refreshToken)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationConstants.TOKEN_SECRET_KEY));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -111,7 +131,7 @@ public class UserService : IUserService
         return new TokenModel
         {
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
-            FullName = user.FullName,
+            RefreshToken = refreshToken
         };
     }
 }

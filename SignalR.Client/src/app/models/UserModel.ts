@@ -6,6 +6,6 @@ export interface UserModel {
 }
 
 export interface UserTokenModel {
-  fullName: string;
   accessToken: string;
+  refreshToken: string;
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserModel } from 'src/app/models/UserModel';
 import { SelfHostedService } from '../selfhosted.services';
 import {
   FormBuilder,
@@ -10,6 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { MessageModel } from 'src/app/models/MessageModel';
 import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
+import { HubService } from '../../shared/hub.services';
 
 @Component({
   selector: 'app-message-box',
@@ -17,7 +17,6 @@ import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
   styleUrls: ['./message-box.component.css'],
 })
 export class MessageBoxComponent implements OnInit {
-  userList: UserModel[] = [];
   conversationAudience: ConversationAudienceModel | null = null;
   messageList: MessageModel[] = [];
   messageForm: FormGroup;
@@ -25,7 +24,8 @@ export class MessageBoxComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private service: SelfHostedService
+    private service: SelfHostedService,
+    private hubService: HubService
   ) {
     this.messageForm = this.formBuilder.group({
       conversationId: new FormControl(),
@@ -34,6 +34,8 @@ export class MessageBoxComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.hubService.startHub();
+
     this.route.params.subscribe((routeData) => {
       const conversationId = +routeData['id'];
 

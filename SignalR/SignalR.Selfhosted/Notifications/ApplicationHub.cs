@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using SignalR.SelfHosted.Users.Services;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
@@ -16,25 +17,20 @@ public class ApplicationHub : Hub
     }
 
     /// <summary>
-    /// Represents a Hub method to connect to a group.
-    /// </summary>
-    /// <param name="groupName">Group name.</param>
-    /// <returns>A task.</returns>
-    public Task JoinGroup(string groupName)
-    {
-        return Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-    }
-
-    /// <summary>
     /// Automatically called when connected.
     /// </summary>
     /// <returns>A completed Task.</returns>
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
-        var userId = 1;
+        var claim = Context.User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier);
+        bool parsed = int.TryParse(claim.Value, out int userId);
+        if (parsed)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, claim.Value);
+            await _userService.OnLineUser(true, userId);
+        }
 
-        _userService.OnLineUser(true, userId);
-        return base.OnConnectedAsync();
+        await base.OnConnectedAsync();
     }
 
     /// <summary>

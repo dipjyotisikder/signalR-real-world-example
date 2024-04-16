@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { selfHostedConstants } from '../constants/selfhosted-constants';
-import * as signalR from '@microsoft/signalr';
 import { UserModel, UserTokenModel } from '../models/UserModel';
 import {
   ConversationAudienceModel,
@@ -10,13 +9,12 @@ import {
   ConversationModel,
 } from '../models/ConversationModel';
 import { MessageCreateModel, MessageModel } from '../models/MessageModel';
-import { AuthService } from './selfhosted.auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SelfHostedService {
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient) {}
 
   getGroups() {
     return this.http.get<string[]>(
@@ -83,20 +81,6 @@ export class SelfHostedService {
         selfHostedConstants.CREATE_MESSAGE_ENDPOINT(payload.conversationId),
       payload
     );
-  }
-
-  buildHubConnection(): signalR.HubConnection {
-    return new signalR.HubConnectionBuilder()
-      .withUrl(
-        environment.selfHostedServerURL +
-          '/' +
-          selfHostedConstants.SIGNALR_ENDPOINT,
-        <signalR.IHttpConnectionOptions>{
-          accessTokenFactory: () => this.authService.getToken(),
-        }
-      )
-      .withAutomaticReconnect()
-      .build();
   }
 
   avatarUrls: string[] = [

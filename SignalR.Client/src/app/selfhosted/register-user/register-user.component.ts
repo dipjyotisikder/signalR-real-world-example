@@ -9,7 +9,7 @@ import {
 import { SelfHostedService } from '../selfhosted.services';
 import { UserModel } from 'src/app/models/UserModel';
 import { Router } from '@angular/router';
-import { AuthService } from '../selfhosted.auth.service';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-register-user',
@@ -54,8 +54,9 @@ export class RegisterUserComponent implements OnInit {
       .subscribe((success) => {
         // console.log('create user response', success);
 
+        debugger;
         this.userForm.reset();
-        this.authService.setToken(success.accessToken);
+        this.authService.setToken(success.accessToken, success.refreshToken);
 
         this.router.navigate(['/selfhosted/messaging']);
       });

@@ -12,5 +12,7 @@ public interface IUserService
 
     User UpdateUser(UpdateUserRequest request);
 
+    TokenModel RefreshUserToken(RefreshUserTokenRequest request);
+
     Task OnLineUser(bool onLine, int userId);
 }

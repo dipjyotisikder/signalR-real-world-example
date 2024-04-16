@@ -3,7 +3,5 @@
     public class CreateConversationRequest
     {
         public string Title { get; set; }
-
-        public int CreatorUserId { get; set; }
     }
 }

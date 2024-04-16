@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using SignalR.SelfHosted.Notifications.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification.Services;
@@ -18,7 +19,7 @@ public class HubService : IHubService
         return _hubContext.Clients.All.SendAsync(eventName.Value, payload);
     }
 
-    public Task SendToGroupsAsync<T>(string[] groups, HubEventName eventName, T payload)
+    public Task SendToGroupsAsync<T>(IEnumerable<string> groups, HubEventName eventName, T payload)
     {
         return _hubContext.Clients.Groups(groups).SendAsync(eventName.Value, payload);
     }

@@ -5,6 +5,11 @@ export const HubConstants = {
   NOTIFICATION_CREATED_HUB_EVENT: 'NotificationCreated',
   CONNECTED_CLIENT_UPDATED_HUB_EVENT: 'ConnectedClientUpdated',
   EXCEPTION_OCCURRED_HUB_EVENT: 'ExceptionOccurred',
+
+  serverEvents: {
+    USER_IS_ONLINE: 'UserIsOnLine',
+    MESSAGE_IS_CREATED: 'MessageIsCreated',
+  },
 };
 
 export const MessageConstants = {

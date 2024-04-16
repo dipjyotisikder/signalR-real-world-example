@@ -1,4 +1,5 @@
-﻿using SignalR.SelfHosted.Messages.Models;
+﻿using SignalR.Common.Constants;
+using SignalR.SelfHosted.Messages.Models;
 using SignalR.SelfHosted.Notification.Services;
 using SignalR.SelfHosted.Notifications.Services;
 using System;
@@ -44,14 +45,15 @@ public class MessageService : IMessageService
                 MessageId = message.Id,
                 AudienceUserId = x.Id
             });
+
         _context.MessageAudiences.AddRange(messageAudiences);
 
         var messageModel = GetMessageModel(message.Id);
 
         await _hubService
             .SendToGroupsAsync(
-                groups: messageAudiences.Select(x => x.AudienceUserId.ToString()).ToArray(),
-                eventName: HubEventName.Create("MessageCreated"),
+                groups: messageAudiences.Select(x => x.AudienceUserId.ToString()),
+                eventName: HubEventName.Create(HubConstants.Events.MESSAGE_IS_CREATED),
                 payload: messageModel);
 
         return messageModel;

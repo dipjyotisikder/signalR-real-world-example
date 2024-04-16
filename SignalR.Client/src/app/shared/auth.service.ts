@@ -1,37 +1,38 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
+import { selfHostedConstants } from '../constants/selfhosted-constants';
 import { environment } from 'src/environments/environment';
-import * as signalR from '@microsoft/signalr';
+import { UserTokenModel } from '../models/UserModel';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.selfHostedServerURL;
-  private authTokenKey = 'auth_token';
+  private accessTokenKey = 'access_token';
+  private refreshTokenKey = 'refresh_token';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(
     this.hasToken()
   );
 
   constructor(private http: HttpClient) {}
 
-  private hasToken(): boolean {
-    return !!localStorage.getItem(this.authTokenKey);
+  public hasToken(): boolean {
+    return !!localStorage.getItem(this.accessTokenKey);
   }
 
-  public getToken(): string | null {
-    return localStorage.getItem(this.authTokenKey);
+  public getAccessToken(): string | null {
+    return localStorage.getItem(this.accessTokenKey);
   }
 
-  public setToken(token: string): void {
-    localStorage.setItem(this.authTokenKey, token);
+  public setToken(token: string, refreshToken: string): void {
+    localStorage.setItem(this.accessTokenKey, token);
+    localStorage.setItem(this.refreshTokenKey, refreshToken);
     this.isAuthenticatedSubject.next(true);
   }
 
   public removeToken(): void {
-    localStorage.removeItem(this.authTokenKey);
+    localStorage.removeItem(this.accessTokenKey);
     this.isAuthenticatedSubject.next(false);
   }
 
@@ -51,26 +52,33 @@ export class AuthService {
   }
 
   getTokenValue(): string | null {
-    return this.getToken();
+    return this.getAccessToken();
   }
 
-  //   refreshToken(): Observable<string> {
-  //     const token = this.getToken();
-  //     if (!token) {
-  //       return throwError(() => new Error('Token not found'));
-  //     }
+  refreshToken(): Observable<UserTokenModel> {
+    const token = this.getAccessToken();
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
 
-  //     return this.http.post<any>(`${this.apiUrl}/refresh-token`, { token }).pipe(
-  //       tap((response) => {
-  //         if (response && response.newToken) {
-  //           this.setToken(response.newToken);
-  //         }
-  //       }),
-  //       catchError((error) => {
-  //         return throwError(() => new Error(error));
-  //       })
-  //     );
-  //   }
+    return this.http
+      .post<UserTokenModel>(
+        environment.selfHostedServerURL +
+          '/' +
+          selfHostedConstants.REFRESH_TOKEN_ENDPOINT,
+        {}
+      )
+      .pipe(
+        tap((response) => {
+          if (response) {
+            this.setToken(response.accessToken, response.refreshToken);
+          }
+        }),
+        catchError((error) => {
+          return throwError(() => new Error(error));
+        })
+      );
+  }
 }
 
 // const getAuthHeaders = () => {

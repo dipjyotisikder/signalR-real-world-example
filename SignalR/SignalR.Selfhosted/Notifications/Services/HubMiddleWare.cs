@@ -18,7 +18,7 @@ public class HubMiddleWare
     {
         var request = httpContext.Request;
 
-        if (request.Path.StartsWithSegments(HubConstants.HubEndpoint, StringComparison.OrdinalIgnoreCase)
+        if (request.Path.StartsWithSegments(HubConstants.HUB_ENDPOINT, StringComparison.OrdinalIgnoreCase)
             && request.Query.TryGetValue("access_token", out var accessToken))
         {
             request.Headers.Add("Authorization", $"Bearer {accessToken}");
