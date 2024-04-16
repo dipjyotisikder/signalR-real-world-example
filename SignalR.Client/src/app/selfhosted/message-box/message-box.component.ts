@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { MessageModel } from 'src/app/models/MessageModel';
 import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
 import { HubService } from '../../shared/hub.services';
+import { AuthService } from 'src/app/shared/auth.service';
 
 @Component({
   selector: 'app-message-box',
@@ -20,16 +21,26 @@ export class MessageBoxComponent implements OnInit {
   conversationAudience: ConversationAudienceModel | null = null;
   messageList: MessageModel[] = [];
   messageForm: FormGroup;
+  currentUserId: number;
+
+  messageListLoaded: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private service: SelfHostedService,
-    private hubService: HubService
+    private hubService: HubService,
+    authService: AuthService
   ) {
+    this.currentUserId = authService.currentUserId();
+
     this.messageForm = this.formBuilder.group({
       conversationId: new FormControl(),
       text: new FormControl('', Validators.required),
+    });
+
+    this.hubService.listenMessageIsCreatedEvent().subscribe((success) => {
+      success && this.messageList.push(success);
     });
   }
 
@@ -49,6 +60,7 @@ export class MessageBoxComponent implements OnInit {
 
       this.service.getMessages(conversationId).subscribe((success) => {
         this.messageList.push(...success);
+        this.messageListLoaded = true;
       });
     });
   }
@@ -65,7 +77,7 @@ export class MessageBoxComponent implements OnInit {
 
       this.messageForm.controls['text'].reset();
 
-      this.messageList.push(success);
+      // this.messageList.push(success);
     });
   }
 }

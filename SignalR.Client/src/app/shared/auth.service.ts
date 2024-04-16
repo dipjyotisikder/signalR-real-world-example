@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { selfHostedConstants } from '../constants/selfhosted-constants';
 import { environment } from 'src/environments/environment';
 import { UserTokenModel } from '../models/UserModel';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -36,23 +37,20 @@ export class AuthService {
     this.isAuthenticatedSubject.next(false);
   }
 
-  //   logout(): Observable<any> {
-  //     return this.http.post<any>(`${this.apiUrl}/logout`, {}).pipe(
-  //       tap(() => {
-  //         this.removeToken();
-  //       }),
-  //       catchError((error) => {
-  //         return throwError(() => new Error(error));
-  //       })
-  //     );
-  //   }
+  public currentUserId(): any {
+    const accessToken = this.getAccessToken();
+    if (accessToken) {
+      const decodedToken = jwtDecode<CustomJwtPayload>(accessToken);
+
+      return decodedToken[
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+      ];
+    }
+    return null;
+  }
 
   isAuthenticated(): Observable<boolean> {
     return this.isAuthenticatedSubject.asObservable();
-  }
-
-  getTokenValue(): string | null {
-    return this.getAccessToken();
   }
 
   refreshToken(): Observable<UserTokenModel> {
@@ -81,40 +79,6 @@ export class AuthService {
   }
 }
 
-// const getAuthHeaders = () => {
-//   return {
-//     Authorization: `Bearer ${authService.getToken()?.accessToken}`,
-//   };
-// };
-
-// class CustomHttpClient extends signalR.DefaultHttpClient {
-//   constructor() {
-//     super(console);
-//   }
-
-//   public override async send(
-//     request: signalR.HttpRequest
-//   ): Promise<signalR.HttpResponse> {
-//     const authHeaders = getAuthHeaders();
-//     request.headers = { ...request.headers, ...authHeaders };
-
-//     try {
-//       const response = await super.send(request);
-//       return response;
-//     } catch (er) {
-//       if (er instanceof signalR.HttpError) {
-//         const error = er as signalR.HttpError;
-//         if (error.statusCode == 401) {
-//           //token expired - trying a refresh via refresh token
-//           await authService.refresh();
-//           const authHeaders = getAuthHeaders();
-//           request.headers = { ...request.headers, ...authHeaders };
-//         }
-//       } else {
-//         throw er;
-//       }
-//     }
-//     //re try the request
-//     return super.send(request);
-//   }
-// }
+export interface CustomJwtPayload extends JwtPayload {
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier': string;
+}

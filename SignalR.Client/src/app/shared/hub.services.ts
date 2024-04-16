@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { NotificationMessage } from '../models/NotificationMessage';
 import { HubConstants } from '../Constants';
 import { MessageModel } from '../models/MessageModel';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +14,21 @@ import { MessageModel } from '../models/MessageModel';
 export class HubService {
   public hubConnection: signalR.HubConnection | null = null;
 
+  private messageIsCreatedSubject = new BehaviorSubject<MessageModel | null>(
+    null
+  );
+
+  private userIsOnlineSubject = new BehaviorSubject<boolean | null>(null);
+
   constructor(private authService: AuthService) {}
+
+  listenMessageIsCreatedEvent() {
+    return this.messageIsCreatedSubject.asObservable();
+  }
+
+  listenUserIsOnlineEvent() {
+    return this.messageIsCreatedSubject.asObservable();
+  }
 
   startHub() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -33,36 +48,17 @@ export class HubService {
       .then(() => {})
       .catch(() => {});
 
-    // this.hubConnection.on(
-    //   HubConstants.NOTIFICATION_CREATED_HUB_EVENT,
-    //   (data: NotificationMessage) => {}
-    // );
-
-    // this.hubConnection.on(
-    //   HubConstants.CONNECTED_CLIENT_UPDATED_HUB_EVENT,
-    //   (data: number) => {
-    //     console.log('connection count', data);
-    //   }
-    // );
-
-    // this.hubConnection.on(
-    //   HubConstants.EXCEPTION_OCCURRED_HUB_EVENT,
-    //   (data: string) => {
-    //     console.log(data);
-    //   }
-    // );
-
     this.hubConnection.on(
       HubConstants.serverEvents.MESSAGE_IS_CREATED,
       (message: MessageModel) => {
-        console.log('server event data', message);
+        this.messageIsCreatedSubject.next(message);
       }
     );
 
     this.hubConnection.on(
       HubConstants.serverEvents.USER_IS_ONLINE,
       (message: boolean) => {
-        console.log('server event data', message);
+        this.userIsOnlineSubject.next(message);
       }
     );
   }

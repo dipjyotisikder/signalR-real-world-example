@@ -131,26 +131,19 @@ public class ConversationService : IConversationService
     public IEnumerable<MessageModel> GetMessages(int conversationId)
     {
         var messages = from m in _context.Messages.Where(x => x.ConversationId == conversationId)
-                       join c in _context.Conversations on m.ConversationId equals c.Id
-                       join cu in _context.Users on c.CreatorUserId equals cu.Id into creatorUsers
+                       join cu in _context.Users on m.CreatorUserId equals cu.Id into creatorUsers
                        from cu in creatorUsers.DefaultIfEmpty()
                        select new MessageModel
                        {
                            Id = m.Id,
                            Text = m.Text,
                            CreatedAt = m.CreatedAt,
-                           Conversation = new ConversationModel
+                           CreatorUser = cu == null ? null : new UserModel
                            {
-                               Id = c.Id,
-                               CreatedAt = c.CreatedAt,
-                               Title = c.Title,
-                               CreatorUser = cu == null ? null : new UserModel
-                               {
-                                   Id = cu.Id,
-                                   FullName = cu.FullName,
-                                   OnLine = cu.OnLine,
-                                   PhotoUrl = cu.PhotoUrl,
-                               }
+                               Id = cu.Id,
+                               FullName = cu.FullName,
+                               OnLine = cu.OnLine,
+                               PhotoUrl = cu.PhotoUrl,
                            }
                        };
         return messages;

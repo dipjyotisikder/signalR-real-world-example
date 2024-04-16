@@ -54,7 +54,6 @@ export class RegisterUserComponent implements OnInit {
       .subscribe((success) => {
         // console.log('create user response', success);
 
-        debugger;
         this.userForm.reset();
         this.authService.setToken(success.accessToken, success.refreshToken);
 

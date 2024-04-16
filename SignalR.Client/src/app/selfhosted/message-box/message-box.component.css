@@ -91,3 +91,26 @@
   height: 40px;
   padding: 0;
 }
+
+
+/* ACTIVE */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+  /* Adjust as needed */
+}
+
+.active {
+  background-color: green;
+}
+
+.inactive {
+  background-color: red;
+}
+
+.current-user {
+  background-color: lemonchiffon;
+}

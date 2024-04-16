@@ -2,6 +2,7 @@
 using SignalR.SelfHosted.Messages.Models;
 using SignalR.SelfHosted.Notification.Services;
 using SignalR.SelfHosted.Notifications.Services;
+using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,15 +14,18 @@ public class MessageService : IMessageService
     private readonly IDataContext _context;
     private readonly IHubService _hubService;
     private readonly IConversationService _conversationService;
+    private readonly ICurrentUser _currentUser;
 
     public MessageService(
         IDataContext context,
         IHubService hubService,
-        IConversationService conversationService)
+        IConversationService conversationService,
+        ICurrentUser currentUser)
     {
         _context = context;
         _hubService = hubService;
         _conversationService = conversationService;
+        _currentUser = currentUser;
     }
 
     public async Task<MessageModel> Create(CreateMessageRequest request)
@@ -33,6 +37,7 @@ public class MessageService : IMessageService
             CreatedAt = DateTime.UtcNow,
             Text = request.Text,
             ConversationId = request.ConversationId,
+            CreatorUserId = _currentUser.Id,
         };
         _context.Messages.Add(message);
 
@@ -63,27 +68,20 @@ public class MessageService : IMessageService
     {
         var messageModel = (from message in _context.Messages
                             where message.Id == messageId
-                            join conversation in _context.Conversations on message.ConversationId equals conversation.Id
-                            join user in _context.Users on conversation.CreatorUserId equals user.Id into creatorUsers
+                            join user in _context.Users on message.CreatorUserId equals user.Id into creatorUsers
                             from user in creatorUsers.DefaultIfEmpty()
-
                             select new MessageModel
                             {
                                 Id = message.Id,
                                 Text = message.Text,
                                 CreatedAt = message.CreatedAt,
-                                Conversation = new ConversationModel
+                                CreatorUser = user == null ? null : new Users.Models.UserModel
                                 {
-                                    Id = conversation.Id,
-                                    Title = conversation.Title,
-                                    CreatedAt = conversation.CreatedAt,
-                                    CreatorUser = user == null ? null : new Users.Models.UserModel
-                                    {
-                                        Id = user.Id,
-                                        FullName = user.FullName,
-                                        PhotoUrl = user.PhotoUrl,
-                                    }
+                                    Id = user.Id,
+                                    FullName = user.FullName,
+                                    PhotoUrl = user.PhotoUrl,
                                 }
+
                             }).FirstOrDefault();
 
         return messageModel;

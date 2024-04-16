@@ -1,8 +1,10 @@
 <div class="container chat-container">
   <div class="user-list" *ngIf="conversationAudience">
-    <div class="user" *ngFor="let user of conversationAudience.audienceUsers">
+    <div class="user" *ngFor="let user of conversationAudience.audienceUsers"
+      [ngClass]="{'current-user': user.id == currentUserId}">
       <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
       <span class="user-name">{{ user.fullName }}</span>
+      <span class="dot" [ngClass]="{ active: user.onLine, inactive: !user.onLine }"></span>
     </div>
     <!-- <div class="user">
       <img src="https://via.placeholder.com/40" alt="User Image" />
@@ -14,21 +16,24 @@
       <h4 class="m-0">Chat</h4>
     </div>
     <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
-      <div class="chat-body">
-        <div class="message">
-          <span class="sender">Jane Smith:</span> Hi John! I'm good, thank you.
-          How about you?
-          <span class="timestamp">10:02 AM</span>
-        </div>
-
+      <div *ngIf="messageListLoaded" class="chat-body">
         <div *ngFor="let message of messageList">
-          <div class="message sender-message">
+          <div class="message" [ngClass]="{'sender-message': message.creatorUser?.id == currentUserId}">
             <span class="sender">{{
-              message.conversation?.creatorUser?.fullName ?? "Dipjyoti Sikder"
-              }}</span>
+              message.creatorUser?.fullName ?? "Dipjyoti Sikder"
+              }}:</span>
             {{ message.text }}
             <span class="timestamp">{{ message.createdAt | date }}</span>
           </div>
+
+          <!-- <div *ngIf="message.conversation?.creatorUser?.id != currentUserId" class="message sender-message">
+            <span class="sender">{{
+              message.conversation?.creatorUser?.fullName ?? "Dipjyoti Sikder"
+              }}:</span>
+            {{ message.text }}
+            <span class="timestamp">{{ message.createdAt | date }}</span>
+          </div> -->
+
         </div>
         <!-- <div class="message sender-message">
           <span class="sender">John Doe:</span> I'm doing great, thanks for

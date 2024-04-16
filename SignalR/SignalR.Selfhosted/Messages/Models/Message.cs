@@ -10,5 +10,7 @@ public class Message
 
     public int ConversationId { get; set; }
 
+    public int CreatorUserId { get; set; }
+
     public DateTime CreatedAt { get; set; }
 }

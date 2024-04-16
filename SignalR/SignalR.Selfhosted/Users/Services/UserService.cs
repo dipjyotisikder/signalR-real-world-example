@@ -26,13 +26,17 @@ public class UserService : IUserService
 
     public TokenModel CreateUser(CreateUserRequest request)
     {
-        var user = new User
+        var user = _context.Users.FirstOrDefault(x => x.FullName == request.FullName);
+        if (user == null)
         {
-            Id = _context.Users.Count + 1,
-            FullName = request.FullName,
-            PhotoUrl = request.PhotoUrl
-        };
-        _context.Users.Add(user);
+            user = new User
+            {
+                Id = _context.Users.Count + 1,
+                FullName = request.FullName,
+                PhotoUrl = request.PhotoUrl
+            };
+            _context.Users.Add(user);
+        }
 
         var refreshToken = Guid.NewGuid().ToString();
         var token = new Token
