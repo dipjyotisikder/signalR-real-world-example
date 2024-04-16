@@ -16,9 +16,5 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\SignalR.Common\SignalR.Common.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Notifications\Models\" />
-	</ItemGroup>
 
 </Project>

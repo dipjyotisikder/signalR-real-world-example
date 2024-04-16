@@ -10,12 +10,13 @@ import {
   ConversationModel,
 } from '../models/ConversationModel';
 import { MessageCreateModel, MessageModel } from '../models/MessageModel';
+import { AuthService } from './selfhosted.auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SelfHostedService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getGroups() {
     return this.http.get<string[]>(
@@ -89,7 +90,10 @@ export class SelfHostedService {
       .withUrl(
         environment.selfHostedServerURL +
           '/' +
-          selfHostedConstants.SIGNALR_ENDPOINT
+          selfHostedConstants.SIGNALR_ENDPOINT,
+        <signalR.IHttpConnectionOptions>{
+          accessTokenFactory: () => this.authService.getToken(),
+        }
       )
       .withAutomaticReconnect()
       .build();

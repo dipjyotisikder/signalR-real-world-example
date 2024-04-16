@@ -8,6 +8,7 @@ using SignalR.SelfHosted;
 using SignalR.SelfHosted.Messages.Services;
 using SignalR.SelfHosted.Notification;
 using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Notifications.Services;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Text;
@@ -66,8 +67,9 @@ app.UseCors(builder => builder
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials());
-
 app.UseRouting();
+
+app.UseMiddleware<HubMiddleWare>();
 
 app.UseAuthentication();
 app.UseAuthorization();

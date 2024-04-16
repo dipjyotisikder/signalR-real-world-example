@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import * as signalR from '@microsoft/signalr';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = environment.selfHostedServerURL; //'https://your-api-url.com'; // Replace this with your .NET API base URL
+  private apiUrl = environment.selfHostedServerURL;
   private authTokenKey = 'auth_token';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(
     this.hasToken()
@@ -70,22 +71,42 @@ export class AuthService {
   //       })
   //     );
   //   }
-
-  // Example function to make authenticated requests
-  //   getData(): Observable<any> {
-  //     const token = this.getToken();
-  //     if (!token) {
-  //       return throwError(() => new Error('Token not found'));
-  //     }
-
-  //     return this.http
-  //       .get<any>(`${this.apiUrl}/data`, {
-  //         headers: { Authorization: `Bearer ${token}` },
-  //       })
-  //       .pipe(
-  //         catchError((error) => {
-  //           return throwError(() => new Error(error));
-  //         })
-  //       );
-  //   }
 }
+
+// const getAuthHeaders = () => {
+//   return {
+//     Authorization: `Bearer ${authService.getToken()?.accessToken}`,
+//   };
+// };
+
+// class CustomHttpClient extends signalR.DefaultHttpClient {
+//   constructor() {
+//     super(console);
+//   }
+
+//   public override async send(
+//     request: signalR.HttpRequest
+//   ): Promise<signalR.HttpResponse> {
+//     const authHeaders = getAuthHeaders();
+//     request.headers = { ...request.headers, ...authHeaders };
+
+//     try {
+//       const response = await super.send(request);
+//       return response;
+//     } catch (er) {
+//       if (er instanceof signalR.HttpError) {
+//         const error = er as signalR.HttpError;
+//         if (error.statusCode == 401) {
+//           //token expired - trying a refresh via refresh token
+//           await authService.refresh();
+//           const authHeaders = getAuthHeaders();
+//           request.headers = { ...request.headers, ...authHeaders };
+//         }
+//       } else {
+//         throw er;
+//       }
+//     }
+//     //re try the request
+//     return super.send(request);
+//   }
+// }

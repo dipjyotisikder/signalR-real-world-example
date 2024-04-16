@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
+
+[Authorize]
 public class ApplicationHub : Hub
 {
     private readonly IUserService _userService;
