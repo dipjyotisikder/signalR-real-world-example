@@ -15,4 +15,6 @@ public interface IUserService
     TokenModel RefreshUserToken(RefreshUserTokenRequest request);
 
     Task OnLineUser(bool onLine, int userId);
+
+    Task TriggerUserIsTypingEvent(int conversationId);
 }

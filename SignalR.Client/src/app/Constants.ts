@@ -10,6 +10,7 @@ export const HubConstants = {
     USER_IS_JOINED: 'UserIsJoined',
     USER_IS_ONLINE: 'UserIsOnLine',
     MESSAGE_IS_CREATED: 'MessageIsCreated',
+    USER_IS_TYPING: 'UserIsTyping',
   },
 };
 

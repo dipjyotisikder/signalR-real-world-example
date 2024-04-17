@@ -14,27 +14,15 @@ import { UserModel } from '../models/UserModel';
 })
 export class HubService {
   public hubConnection: signalR.HubConnection | null = null;
-
   private messageIsCreatedSubject = new BehaviorSubject<MessageModel | null>(
     null
   );
 
   private userIsOnlineSubject = new BehaviorSubject<boolean | null>(null);
   private userIsJoinedSubject = new BehaviorSubject<UserModel | null>(null);
+  private userIsTypingSubject = new BehaviorSubject<UserModel | null>(null);
 
   constructor(private authService: AuthService) {}
-
-  listenMessageIsCreatedEvent() {
-    return this.messageIsCreatedSubject.asObservable();
-  }
-
-  listenUserIsOnlineEvent() {
-    return this.userIsOnlineSubject.asObservable();
-  }
-
-  listenUserIsJoinedEvent() {
-    return this.userIsJoinedSubject.asObservable();
-  }
 
   startHub() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -74,9 +62,39 @@ export class HubService {
         this.userIsJoinedSubject.next(user);
       }
     );
+
+    this.hubConnection.on(
+      HubConstants.serverEvents.USER_IS_TYPING,
+      (user: UserModel) => {
+        this.userIsTypingSubject.next(user);
+      }
+    );
   }
 
   stopHub() {
     this.hubConnection && this.hubConnection.stop().then(() => {});
+  }
+
+  listenMessageIsCreatedEvent() {
+    return this.messageIsCreatedSubject.asObservable();
+  }
+
+  listenUserIsOnlineEvent() {
+    return this.userIsOnlineSubject.asObservable();
+  }
+
+  listenUserIsJoinedEvent() {
+    return this.userIsJoinedSubject.asObservable();
+  }
+
+  listenUserIsTypingEvent() {
+    return this.userIsTypingSubject.asObservable();
+  }
+
+  triggerUserIsTypingEvent(conversationId: number) {
+    return this.hubConnection?.invoke(
+      HubConstants.serverEvents.USER_IS_TYPING,
+      conversationId
+    );
   }
 }

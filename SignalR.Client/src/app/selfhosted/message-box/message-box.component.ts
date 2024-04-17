@@ -54,6 +54,10 @@ export class MessageBoxComponent implements OnInit {
         this.conversationAudience.audienceUsers.push(success);
       }
     });
+
+    this.hubService.listenUserIsTypingEvent().subscribe((success) => {
+      console.log('typing...', success);
+    });
   }
 
   ngOnInit() {
@@ -91,5 +95,21 @@ export class MessageBoxComponent implements OnInit {
 
   timeTransform(dateTime: string): string {
     return this.timeAgoPipe.transform(dateTime);
+  }
+
+  onBlur(event: any) {
+    // console.log('onBlur', event);
+  }
+
+  onFocus(event: any) {
+    // console.log('onFocus', event);
+  }
+
+  onInput(event: any) {
+    // console.log('onInput', event);
+    setTimeout(() => {
+      this.conversationAudience &&
+        this.hubService.triggerUserIsTypingEvent(this.conversationAudience.id);
+    }, 500);
   }
 }

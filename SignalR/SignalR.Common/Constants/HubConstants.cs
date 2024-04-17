@@ -26,6 +26,11 @@
             public const string USER_IS_ONLINE = "UserIsOnLine";
 
             /// <summary>
+            /// Represents a Hub event for users onLine status.
+            /// </summary>
+            public const string USER_IS_TYPING = "UserIsTyping";
+
+            /// <summary>
             /// Represents a Hub event for users message creation.
             /// </summary>
             public const string MESSAGE_IS_CREATED = "MessageIsCreated";

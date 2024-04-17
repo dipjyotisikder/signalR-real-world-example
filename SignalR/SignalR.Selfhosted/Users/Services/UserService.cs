@@ -17,11 +17,13 @@ public class UserService : IUserService
 {
     private readonly IDataContext _context;
     private readonly IHubService _hubService;
+    private readonly ICurrentUser _currentUser;
 
-    public UserService(IDataContext context, IHubService hubService)
+    public UserService(IDataContext context, IHubService hubService, ICurrentUser currentUser)
     {
         _context = context;
         _hubService = hubService;
+        _currentUser = currentUser;
     }
 
     public TokenModel CreateUser(CreateUserRequest request)
@@ -132,5 +134,27 @@ public class UserService : IUserService
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = refreshToken
         };
+    }
+
+    public Task TriggerUserIsTypingEvent(int conversationId)
+    {
+        var audienceUserIds = _context.ConversationAudiences
+            .Where(x => x.ConversationId == conversationId)
+            .Select(x => x.AudienceUserId.ToString()).Distinct();
+
+        var typingUser = _context.Users
+           .Where(x => x.Id == _currentUser.Id)
+           .Select(x => new UserModel
+           {
+               Id = x.Id,
+               FullName = x.FullName,
+               OnLine = x.OnLine,
+               PhotoUrl = x.PhotoUrl,
+           }).FirstOrDefault();
+
+        return _hubService.SendToGroupsAsync(
+                    groups: audienceUserIds,
+                    eventName: HubEventName.Create(HubConstants.Events.USER_IS_TYPING),
+                    typingUser);
     }
 }

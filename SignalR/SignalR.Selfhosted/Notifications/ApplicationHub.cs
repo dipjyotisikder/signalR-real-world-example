@@ -44,4 +44,9 @@ public class ApplicationHub : Hub
             Clients.All.SendAsync("ExceptionOccured", exception?.Message),
             base.OnDisconnectedAsync(exception));
     }
+
+    public Task UserIsTyping(int conversationId)
+    {
+        return _userService.TriggerUserIsTypingEvent(conversationId);
+    }
 }
