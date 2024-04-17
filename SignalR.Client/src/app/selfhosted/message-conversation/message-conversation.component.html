@@ -17,35 +17,24 @@
   <div class="row">
     <div class="col-md-6">
       <div class="conversation-list">
-        <div class="conversation-item" *ngFor="let conversation of conversationList">
+        <div class="conversation-item" *ngFor="let conversation of myConversationList">
           <div (click)="navigateConversation(conversation.id)">
-            <img src="{{
-                conversation.creatorUser?.photoUrl ??
-                  'https://via.placeholder.com/40'
-              }}" alt="Conversation Image" />
+            <img src="{{ conversation.creatorUser?.photoUrl ?? 'https://via.placeholder.com/40' }}"
+              alt="Conversation Image" />
             <span class="conversation-title">{{ conversation.title }}</span>
           </div>
         </div>
-        <!-- <div class="conversation-item">
-          <img src="https://via.placeholder.com/40" alt="User Image" />
-          <span class="conversation-title">Jane Smith</span>
-        </div> -->
       </div>
     </div>
 
     <div class="col-md-6">
       <div class="conversation-list">
-        <div class="conversation-item">
-          <img src="https://via.placeholder.com/40" alt="User Image" />
-          <span class="conversation-title">Jane Smith</span>
-        </div>
-        <div class="conversation-item">
-          <img src="https://via.placeholder.com/40" alt="User Image" />
-          <span class="conversation-title">Jane Smith</span>
-        </div>
-        <div class="conversation-item">
-          <img src="https://via.placeholder.com/40" alt="User Image" />
-          <span class="conversation-title">Jane Smith</span>
+        <div class="conversation-item" *ngFor="let conversation of otherConversationList">
+          <div (click)="navigateConversation(conversation.id)">
+            <img src="{{ conversation.creatorUser?.photoUrl ?? 'https://via.placeholder.com/40' }}"
+              alt="Conversation Image" />
+            <span class="conversation-title">{{ conversation.title }}</span>
+          </div>
         </div>
       </div>
     </div>

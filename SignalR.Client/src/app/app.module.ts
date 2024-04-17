@@ -13,6 +13,7 @@ import { RegisterUserComponent } from './selfhosted/register-user/register-user.
 import { MessageConversationComponent } from './selfhosted/message-conversation/message-conversation.component';
 import { RouterModule } from '@angular/router';
 import { TokenInterceptor } from './shared/token.interceptor';
+import { TimeAgoPipe } from './shared/timeAgo.pipe';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { TokenInterceptor } from './shared/token.interceptor';
     MessageBoxComponent,
     RegisterUserComponent,
     MessageConversationComponent,
+    TimeAgoPipe,
   ],
 
   providers: [

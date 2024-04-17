@@ -16,6 +16,11 @@
         public static class Events
         {
             /// <summary>
+            /// Represents a Hub event for users joining status.
+            /// </summary>
+            public const string USER_IS_JOINED = "UserIsJoined";
+
+            /// <summary>
             /// Represents a Hub event for users onLine status.
             /// </summary>
             public const string USER_IS_ONLINE = "UserIsOnLine";

@@ -42,8 +42,8 @@ public class MessageService : IMessageService
         _context.Messages.Add(message);
 
         // ADD USERS FROM CURRENT CONVERSATION
-        var messageAudiences = _conversationService
-            .GetAudiences(request.ConversationId)
+        var messageAudiences = (await _conversationService
+            .GetAudiences(request.ConversationId))
             .AudienceUsers
             .Select(x => new MessageAudience
             {

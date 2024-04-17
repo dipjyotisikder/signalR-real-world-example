@@ -33,10 +33,14 @@
   font-weight: bold;
 }
 
-.chat-list {
+.chat {
   flex: 2;
-  padding: 15px;
+  padding: 10px;
   overflow-y: auto;
+}
+
+.chat-header {
+  padding: 10px;
 }
 
 .chat-body {

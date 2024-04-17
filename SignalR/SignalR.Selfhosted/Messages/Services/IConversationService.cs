@@ -1,5 +1,6 @@
 ﻿using SignalR.SelfHosted.Messages.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Messages.Services;
 
@@ -9,7 +10,7 @@ public interface IConversationService
 
     IEnumerable<MessageModel> GetMessages(int conversationId);
 
-    ConversationAudienceModel GetAudiences(int conversationId);
+    Task<ConversationAudienceModel> GetAudiences(int conversationId);
 
     ConversationModel Create(CreateConversationRequest request);
 }

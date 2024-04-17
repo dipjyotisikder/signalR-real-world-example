@@ -7,6 +7,7 @@ import { NotificationMessage } from '../models/NotificationMessage';
 import { HubConstants } from '../Constants';
 import { MessageModel } from '../models/MessageModel';
 import { BehaviorSubject } from 'rxjs';
+import { UserModel } from '../models/UserModel';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,7 @@ export class HubService {
   );
 
   private userIsOnlineSubject = new BehaviorSubject<boolean | null>(null);
+  private userIsJoinedSubject = new BehaviorSubject<UserModel | null>(null);
 
   constructor(private authService: AuthService) {}
 
@@ -27,7 +29,11 @@ export class HubService {
   }
 
   listenUserIsOnlineEvent() {
-    return this.messageIsCreatedSubject.asObservable();
+    return this.userIsOnlineSubject.asObservable();
+  }
+
+  listenUserIsJoinedEvent() {
+    return this.userIsJoinedSubject.asObservable();
   }
 
   startHub() {
@@ -59,6 +65,13 @@ export class HubService {
       HubConstants.serverEvents.USER_IS_ONLINE,
       (message: boolean) => {
         this.userIsOnlineSubject.next(message);
+      }
+    );
+
+    this.hubConnection.on(
+      HubConstants.serverEvents.USER_IS_JOINED,
+      (user: UserModel) => {
+        this.userIsJoinedSubject.next(user);
       }
     );
   }

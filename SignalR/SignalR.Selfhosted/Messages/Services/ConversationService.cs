@@ -1,9 +1,13 @@
-﻿using SignalR.SelfHosted.Messages.Models;
+﻿using SignalR.Common.Constants;
+using SignalR.SelfHosted.Messages.Models;
+using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Notifications.Services;
 using SignalR.SelfHosted.Users.Models;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Messages.Services;
 
@@ -11,11 +15,16 @@ public class ConversationService : IConversationService
 {
     private readonly IDataContext _context;
     private readonly ICurrentUser _currentUser;
+    private readonly IHubService _hubService;
 
-    public ConversationService(IDataContext context, ICurrentUser currentUser)
+    public ConversationService(
+        IDataContext context,
+        ICurrentUser currentUser,
+        IHubService hubService)
     {
         _context = context;
         _currentUser = currentUser;
+        _hubService = hubService;
     }
 
     public ConversationModel Create(CreateConversationRequest request)
@@ -78,7 +87,7 @@ public class ConversationService : IConversationService
                };
     }
 
-    public ConversationAudienceModel GetAudiences(int conversationId)
+    public async Task<ConversationAudienceModel> GetAudiences(int conversationId)
     {
         var conversation = _context.Conversations.FirstOrDefault(x => x.Id == conversationId);
         if (conversation == null)
@@ -87,15 +96,34 @@ public class ConversationService : IConversationService
         }
 
         // ADD CURRENT USER TO CONVERSATION
-        var currentUserId = _currentUser.Id;
-        var isAnAudience = _context.ConversationAudiences.Where(x => x.AudienceUserId == currentUserId && x.ConversationId == conversation.Id).Any();
+        var isAnAudience = _context.ConversationAudiences.Where(x => x.AudienceUserId == _currentUser.Id && x.ConversationId == conversation.Id).Any();
         if (!isAnAudience)
         {
             _context.ConversationAudiences.Add(new ConversationAudience
             {
-                AudienceUserId = currentUserId,
+                AudienceUserId = _currentUser.Id,
                 ConversationId = conversation.Id
             });
+
+            // SEND CONNECTING USER TO ALL WHO BELONG TO THIS CONVERSATION.
+            var conversationAudiences = _context.ConversationAudiences
+                .Where(x => x.ConversationId == conversationId)
+                .Select(x => x.AudienceUserId.ToString()).Distinct();
+
+            var payload = _context.Users
+                .Select(x => new UserModel
+                {
+                    Id = x.Id,
+                    FullName = x.FullName,
+                    OnLine = x.OnLine,
+                    PhotoUrl = x.PhotoUrl
+                }).First(x => x.Id == _currentUser.Id);
+
+            await _hubService
+                .SendToGroupsAsync(
+                    groups: conversationAudiences,
+                    eventName: HubEventName.Create(HubConstants.Events.USER_IS_JOINED),
+                    payload: payload);
         }
 
         var audiences = from ca in _context.ConversationAudiences.Where(x => x.ConversationId == conversationId)

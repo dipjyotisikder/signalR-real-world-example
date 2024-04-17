@@ -7,6 +7,7 @@ export const HubConstants = {
   EXCEPTION_OCCURRED_HUB_EVENT: 'ExceptionOccurred',
 
   serverEvents: {
+    USER_IS_JOINED: 'UserIsJoined',
     USER_IS_ONLINE: 'UserIsOnLine',
     MESSAGE_IS_CREATED: 'MessageIsCreated',
   },

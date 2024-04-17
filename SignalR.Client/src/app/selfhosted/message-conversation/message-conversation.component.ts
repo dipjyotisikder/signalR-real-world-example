@@ -8,7 +8,6 @@ import {
 import { SelfHostedService } from '../selfhosted.services';
 import { ConversationModel } from 'src/app/models/ConversationModel';
 import { Router } from '@angular/router';
-import { HubService } from 'src/app/shared/hub.services';
 import { AuthService } from 'src/app/shared/auth.service';
 
 @Component({
@@ -20,7 +19,8 @@ export class MessageConversationComponent implements OnInit {
   conversationForm: FormGroup;
   currentUserId: number;
 
-  conversationList: ConversationModel[] = [];
+  myConversationList: ConversationModel[] = [];
+  otherConversationList: ConversationModel[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,7 +40,12 @@ export class MessageConversationComponent implements OnInit {
 
   ngOnInit(): void {
     this.selfHostedService.getConversations().subscribe((success) => {
-      this.conversationList.push(...success);
+      this.myConversationList.push(
+        ...success.filter((x) => x.creatorUser?.id == this.currentUserId)
+      );
+      this.otherConversationList.push(
+        ...success.filter((x) => x.creatorUser?.id != this.currentUserId)
+      );
     });
   }
 
@@ -57,7 +62,7 @@ export class MessageConversationComponent implements OnInit {
       .createConversation(this.conversationForm.value)
       .subscribe((success) => {
         console.log('conversation create result', success);
-        this.conversationList.push(success);
+        this.myConversationList.push(success);
         this.conversationForm.reset();
       });
   }

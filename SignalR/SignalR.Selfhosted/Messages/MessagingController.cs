@@ -33,9 +33,9 @@ public class MessagingController : ControllerBase
     }
 
     [HttpGet("conversations/{conversationId}/audiences")]
-    public IActionResult GetAudiences([FromRoute] int conversationId)
+    public async Task<IActionResult> GetAudiences([FromRoute] int conversationId)
     {
-        return Ok(_conversationService.GetAudiences(conversationId));
+        return Ok(await _conversationService.GetAudiences(conversationId));
     }
 
     [HttpGet("conversations/{conversationId}/messages")]

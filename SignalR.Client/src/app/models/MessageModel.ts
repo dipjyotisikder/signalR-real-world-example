@@ -1,11 +1,10 @@
-import { ConversationModel } from './ConversationModel';
 import { UserModel } from './UserModel';
 
 export interface MessageModel {
   id: number;
   text: string;
   creatorUser?: UserModel;
-  createdAt: Date;
+  createdAt: string;
 }
 
 export interface MessageCreateModel {

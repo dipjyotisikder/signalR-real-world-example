@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { HubConstants, MessageConstants } from '../Constants';
 import { NotificationMessage } from '../models/NotificationMessage';
-import { SelfHostedService } from './selfhosted.services';
 
 @Component({
   selector: 'app-selfhosted',

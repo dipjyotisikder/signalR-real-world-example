@@ -42,6 +42,16 @@ export class MessageBoxComponent implements OnInit {
     this.hubService.listenMessageIsCreatedEvent().subscribe((success) => {
       success && this.messageList.push(success);
     });
+
+    this.hubService.listenUserIsJoinedEvent().subscribe((success) => {
+      if (
+        success &&
+        this.conversationAudience &&
+        !this.conversationAudience.audienceUsers.some((x) => x.id == success.id)
+      ) {
+        this.conversationAudience.audienceUsers.push(success);
+      }
+    });
   }
 
   ngOnInit() {
