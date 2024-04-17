@@ -12,6 +12,7 @@ import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
 import { HubService } from '../../shared/hub.services';
 import { AuthService } from 'src/app/shared/auth.service';
 import { TimeAgoPipe } from 'src/app/shared/timeAgo.pipe';
+import { UserModel } from 'src/app/models/UserModel';
 
 @Component({
   selector: 'app-message-box',
@@ -26,6 +27,7 @@ export class MessageBoxComponent implements OnInit {
 
   messageListLoaded: boolean = false;
   typing: boolean = false;
+  typingUsers: UserModel[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,12 +46,15 @@ export class MessageBoxComponent implements OnInit {
     });
 
     this.hubService.listenMessageIsCreatedEvent().subscribe((success) => {
-      success && this.messageList.push(success);
+      if (!success) return;
+      this.messageList.push(success);
     });
 
     this.hubService.listenUserIsJoinedEvent().subscribe((success) => {
+      console.log('joined...', success);
+      if (!success) return;
+
       if (
-        success &&
         this.conversationAudience &&
         !this.conversationAudience.audienceUsers.some((x) => x.id == success.id)
       ) {
@@ -58,8 +63,8 @@ export class MessageBoxComponent implements OnInit {
     });
 
     this.hubService.listenUserIsTypingEvent().subscribe((success) => {
-      console.log('typing...', success);
-      this.activateTyping();
+      if (!success) return;
+      this.activateTyping(success);
     });
   }
 
@@ -100,11 +105,14 @@ export class MessageBoxComponent implements OnInit {
     return this.timeAgoPipe.transform(dateTime);
   }
 
-  activateTyping() {
+  activateTyping(user: UserModel) {
     this.typing = true;
+    if (!this.typingUsers.some((x) => x.id == user.id))
+      this.typingUsers.push(user);
 
     setTimeout(() => {
       this.typing = false;
+      this.typingUsers = [];
     }, 3500);
   }
 
@@ -117,7 +125,6 @@ export class MessageBoxComponent implements OnInit {
   }
 
   onInput(event: any) {
-    // console.log('onInput', event);
     setTimeout(() => {
       this.conversationAudience &&
         this.hubService.triggerUserIsTypingEvent(this.conversationAudience.id);

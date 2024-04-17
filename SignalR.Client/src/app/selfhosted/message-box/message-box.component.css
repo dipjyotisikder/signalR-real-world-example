@@ -162,6 +162,11 @@
   height: 17px;
 }
 
+.typing-head img {
+  border-radius: 50px;
+  width: 20px;
+}
+
 .typing .dot {
   animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
   background-color: #6cad96;

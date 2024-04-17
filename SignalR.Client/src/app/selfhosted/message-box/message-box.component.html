@@ -24,7 +24,11 @@
           <span class="timestamp">{{ timeTransform(message.createdAt) }}</span>
         </div>
 
-        <div class="chat-bubble" *ngIf="typing">
+        <!-- <div class="chat-bubble" *ngIf="typingUsers.length"> -->
+        <div class="chat-bubble">
+          <span *ngFor="let tUser of typingUsers" class="typing-head">
+            <img src="{{ tUser.photoUrl }}" alt="{{ tUser.fullName }}" />
+          </span>
           <div class="typing">
             <div class="dot"></div>
             <div class="dot"></div>
