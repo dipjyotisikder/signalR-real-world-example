@@ -139,7 +139,7 @@ public class UserService : IUserService
     public Task TriggerUserIsTypingEvent(int conversationId)
     {
         var audienceUserIds = _context.ConversationAudiences
-            .Where(x => x.ConversationId == conversationId)
+            .Where(x => x.ConversationId == conversationId && x.AudienceUserId != _currentUser.Id)
             .Select(x => x.AudienceUserId.ToString()).Distinct();
 
         var typingUser = _context.Users
