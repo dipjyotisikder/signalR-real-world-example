@@ -11,6 +11,7 @@ import { MessageModel } from 'src/app/models/MessageModel';
 import { ConversationAudienceModel } from 'src/app/models/ConversationModel';
 import { HubService } from '../../shared/hub.services';
 import { AuthService } from 'src/app/shared/auth.service';
+import { TimeAgoPipe } from 'src/app/shared/timeAgo.pipe';
 
 @Component({
   selector: 'app-message-box',
@@ -28,6 +29,7 @@ export class MessageBoxComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
+    private timeAgoPipe: TimeAgoPipe,
     private service: SelfHostedService,
     private hubService: HubService,
     authService: AuthService
@@ -83,11 +85,11 @@ export class MessageBoxComponent implements OnInit {
     }
 
     this.service.createMessage(this.messageForm.value).subscribe((success) => {
-      console.log('create message result: ', success);
-
       this.messageForm.controls['text'].reset();
-
-      // this.messageList.push(success);
     });
+  }
+
+  timeTransform(dateTime: string): string {
+    return this.timeAgoPipe.transform(dateTime);
   }
 }

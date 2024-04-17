@@ -6,6 +6,7 @@
   overflow: hidden;
   background-color: #fff;
   display: flex;
+  padding: 0px !important;
 }
 
 .user-list {
@@ -22,6 +23,10 @@
   border-bottom: 1px solid #ced4da;
 }
 
+.user:last-child {
+  border-bottom: 0px;
+}
+
 .user img {
   width: 40px;
   height: 40px;
@@ -35,7 +40,6 @@
 
 .chat {
   flex: 2;
-  padding: 10px;
   overflow-y: auto;
 }
 
@@ -50,10 +54,14 @@
 }
 
 .message {
-  margin-bottom: 10px;
+  /* margin-bottom: 10px;
   padding: 10px 15px;
   border-radius: 10px;
+  max-width: 70%; */
+  padding: 10px;
+  border-radius: 10px;
   max-width: 70%;
+  margin: 10px 10px;
 }
 
 .message .sender {
@@ -67,9 +75,14 @@
 }
 
 .message.sender-message {
-  background-color: #007bff;
+  background-color: #797f85;
   color: #fff;
   align-self: flex-end;
+}
+
+.message.other-message {
+  background-color: #f3f3f3;
+  color: #020202;
 }
 
 .message.sender-message .sender {
@@ -96,7 +109,6 @@
   padding: 0;
 }
 
-
 /* ACTIVE */
 .dot {
   width: 8px;
@@ -116,5 +128,7 @@
 }
 
 .current-user {
-  background-color: lemonchiffon;
+  background-color: #bdbdbd;
+  border-radius: 0px;
+  color: #ffffff;
 }

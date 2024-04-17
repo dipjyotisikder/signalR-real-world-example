@@ -26,15 +26,10 @@ public class UserService : IUserService
 
     public TokenModel CreateUser(CreateUserRequest request)
     {
-        var user = _context.Users.FirstOrDefault(x => x.FullName == request.FullName);
+        var user = _context.Users.FirstOrDefault(x => x.FullNameNormalized == request.FullName.ToUpper());
         if (user == null)
         {
-            user = new User
-            {
-                Id = _context.Users.Count + 1,
-                FullName = request.FullName,
-                PhotoUrl = request.PhotoUrl
-            };
+            user = new User(id: _context.Users.Count + 1, fullName: request.FullName, photoUrl: request.PhotoUrl);
             _context.Users.Add(user);
         }
 
@@ -86,7 +81,7 @@ public class UserService : IUserService
             return null;
         }
 
-        user.FullName = request.FullName;
+        user.SetFullName(request.FullName);
         user.PhotoUrl = request.PhotoUrl;
         user.OnLine = request.Active;
 

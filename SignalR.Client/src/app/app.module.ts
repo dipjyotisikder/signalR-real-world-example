@@ -34,7 +34,6 @@ import { TimeAgoPipe } from './shared/timeAgo.pipe';
     MessageBoxComponent,
     RegisterUserComponent,
     MessageConversationComponent,
-    TimeAgoPipe,
   ],
 
   providers: [
@@ -43,6 +42,7 @@ import { TimeAgoPipe } from './shared/timeAgo.pipe';
       useClass: TokenInterceptor,
       multi: true,
     },
+    TimeAgoPipe,
   ],
   bootstrap: [AppComponent],
 })

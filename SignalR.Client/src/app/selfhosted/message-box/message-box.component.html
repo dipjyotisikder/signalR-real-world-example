@@ -4,12 +4,11 @@
     <div class="user" *ngFor="let user of conversationAudience.audienceUsers"
       [ngClass]="{'current-user': user.id == currentUserId}">
       <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
-      <span class="user-name">{{ user.fullName }}</span>
+      <span class="user-name">{{ user.fullName }}</span><span *ngIf="user.id == currentUserId">(You)</span>
       <span class="dot" [ngClass]="{ active: user.onLine, inactive: !user.onLine }"></span>
     </div>
   </div>
 
-  <!-- <div class="chat"> -->
   <div class="chat">
 
     <div class="chat-header">
@@ -18,23 +17,21 @@
 
     <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
       <div *ngIf="messageListLoaded" class="chat-body">
-        <div *ngFor="let message of messageList">
-          <div class="message" [ngClass]="{'sender-message': message.creatorUser?.id == currentUserId}">
-            <span class="sender">{{message.creatorUser?.fullName}}:</span>{{ message.text }}
-            <span class="timestamp">{{ message.createdAt | timeAgo }}</span>
-          </div>
+
+        <div *ngFor="let message of messageList" class="message"
+          [ngClass]="{'sender-message': message.creatorUser?.id == currentUserId, 'other-message': message.creatorUser?.id != currentUserId}">
+          <span class="sender">{{message.creatorUser?.fullName}}:</span> &nbsp;{{ message.text }}
+          <span class="timestamp">{{ timeTransform(message.createdAt) }}</span>
         </div>
       </div>
       <div class="input-group">
         <input type="text" class="form-control" formControlName="text" autocomplete="off"
-          placeholder="Type your message..." />
-        <button class="btn btn-primary" type="submit">
+          placeholder="Type your message and press enter..." />
+        <!-- <button class="btn btn-primary" type="submit">
           <i class="fas fa-paper-plane"></i>
-        </button>
+        </button> -->
       </div>
     </form>
   </div>
-
-  <!-- </div> -->
 
 </div>
