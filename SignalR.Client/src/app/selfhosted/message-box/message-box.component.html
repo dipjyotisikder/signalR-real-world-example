@@ -24,7 +24,7 @@
           <span class="timestamp">{{ timeTransform(message.createdAt) }}</span>
         </div>
 
-        <div class="chat-bubble">
+        <div class="chat-bubble" *ngIf="typing">
           <div class="typing">
             <div class="dot"></div>
             <div class="dot"></div>

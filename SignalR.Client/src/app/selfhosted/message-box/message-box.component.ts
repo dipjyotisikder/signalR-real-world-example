@@ -25,6 +25,7 @@ export class MessageBoxComponent implements OnInit {
   currentUserId: number;
 
   messageListLoaded: boolean = false;
+  typing: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,6 +36,7 @@ export class MessageBoxComponent implements OnInit {
     authService: AuthService
   ) {
     this.currentUserId = authService.currentUserId();
+    this.typing = false;
 
     this.messageForm = this.formBuilder.group({
       conversationId: new FormControl(),
@@ -57,6 +59,7 @@ export class MessageBoxComponent implements OnInit {
 
     this.hubService.listenUserIsTypingEvent().subscribe((success) => {
       console.log('typing...', success);
+      this.activateTyping();
     });
   }
 
@@ -95,6 +98,14 @@ export class MessageBoxComponent implements OnInit {
 
   timeTransform(dateTime: string): string {
     return this.timeAgoPipe.transform(dateTime);
+  }
+
+  activateTyping() {
+    this.typing = true;
+
+    setTimeout(() => {
+      this.typing = false;
+    }, 3500);
   }
 
   onBlur(event: any) {
