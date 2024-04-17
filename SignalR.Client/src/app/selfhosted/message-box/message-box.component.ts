@@ -26,8 +26,9 @@ export class MessageBoxComponent implements OnInit {
   currentUserId: number;
 
   messageListLoaded: boolean = false;
-  typing: boolean = false;
   typingUsers: UserModel[] = [];
+  typingInterval: number = 2000;
+  typingTimeout: any = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -37,23 +38,25 @@ export class MessageBoxComponent implements OnInit {
     private hubService: HubService,
     authService: AuthService
   ) {
+    // INIT CURRENT USER ID
     this.currentUserId = authService.currentUserId();
-    this.typing = false;
 
+    // INIT MESSAGE FORM
     this.messageForm = this.formBuilder.group({
       conversationId: new FormControl(),
       text: new FormControl('', Validators.required),
     });
 
+    // INIT LISTENER FOR MESSAGE_IS_CREATED EVENT
     this.hubService.listenMessageIsCreatedEvent().subscribe((success) => {
       if (!success) return;
       this.messageList.push(success);
+      success.creatorUser && this.removeTyping(success.creatorUser);
     });
 
+    // INIT LISTENER FOR USER_IS_JOINED EVENT
     this.hubService.listenUserIsJoinedEvent().subscribe((success) => {
-      console.log('joined...', success);
       if (!success) return;
-
       if (
         this.conversationAudience &&
         !this.conversationAudience.audienceUsers.some((x) => x.id == success.id)
@@ -62,6 +65,7 @@ export class MessageBoxComponent implements OnInit {
       }
     });
 
+    // INIT LISTENER FOR USER_IS_TYPING EVENT
     this.hubService.listenUserIsTypingEvent().subscribe((success) => {
       if (!success) return;
       this.activateTyping(success);
@@ -90,7 +94,6 @@ export class MessageBoxComponent implements OnInit {
   }
 
   onSubmit() {
-    // console.log('form', this.messageForm.value);
     if (this.messageForm.invalid) {
       this.messageForm.controls['text'].markAsTouched();
       return;
@@ -106,14 +109,18 @@ export class MessageBoxComponent implements OnInit {
   }
 
   activateTyping(user: UserModel) {
-    this.typing = true;
     if (!this.typingUsers.some((x) => x.id == user.id))
       this.typingUsers.push(user);
 
-    setTimeout(() => {
-      this.typing = false;
+    this.typingTimeout && clearTimeout(this.typingTimeout);
+    this.typingTimeout = setTimeout(() => {
       this.typingUsers = [];
-    }, 3500);
+    }, this.typingInterval);
+  }
+
+  removeTyping(user: UserModel) {
+    this.typingTimeout && clearTimeout(this.typingTimeout);
+    this.typingUsers = this.typingUsers.filter((x) => x.id != user.id);
   }
 
   onBlur(event: any) {
