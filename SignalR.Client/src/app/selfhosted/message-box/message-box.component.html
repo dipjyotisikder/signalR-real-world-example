@@ -1,0 +1,49 @@
+<div class="container chat-container">
+
+  <div class="user-list" *ngIf="conversationAudience">
+    <div class="user" *ngFor="let user of conversationAudience.audienceUsers"
+      [ngClass]="{'current-user': user.id == currentUserId}">
+      <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
+      <span class="user-name">{{ user.fullName }}</span><span *ngIf="user.id == currentUserId">(You)</span>
+      <span class="dot" [ngClass]="{ active: user.onLine, inactive: !user.onLine }"></span>
+    </div>
+  </div>
+
+  <div class="chat">
+
+    <div class="chat-header">
+      <h4>{{conversationAudience?.title}}</h4>
+    </div>
+
+    <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
+      <div *ngIf="messageListLoaded" class="chat-body">
+
+        <div *ngFor="let message of messageList" class="message"
+          [ngClass]="{'sender-message': message.creatorUser?.id == currentUserId, 'other-message': message.creatorUser?.id != currentUserId}">
+          <span class="sender">{{message.creatorUser?.fullName}}:</span> &nbsp;{{ message.text }}
+          <span class="timestamp">{{ timeTransform(message.createdAt) }}</span>
+        </div>
+
+        <div class="chat-bubble" *ngIf="typingUsers.length">
+          <!-- <div class="chat-bubble"> -->
+          <span *ngFor="let tUser of typingUsers" class="typing-head">
+            <img src="{{ tUser.photoUrl }}" alt="{{ tUser.fullName }}" />
+          </span>
+          <div class="typing">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="input-group">
+
+        <input type="text" class="form-control" formControlName="text" autocomplete="off"
+          placeholder="Type your message and press enter..." (input)="onInput($event)" (blur)="onBlur($event)"
+          (focus)="onFocus($event)" />
+      </div>
+    </form>
+  </div>
+
+</div>

@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h3 class="card-title m-0">Who are you?</h3>
+    </div>
+    <div class="card-body">
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+
+          <input type="text" class="form-control" id="fullName" formControlName="fullName" autocomplete="off"
+            placeholder="Your full name." />
+
+          <div *ngIf="userForm?.invalid && userForm?.touched" class="text-danger">
+            <div *ngIf="userForm.get('fullName')?.hasError">
+              Name is required.
+            </div>
+          </div>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>

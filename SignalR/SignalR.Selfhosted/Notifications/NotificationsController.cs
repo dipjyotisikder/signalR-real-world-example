@@ -1,25 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
-using SignalR.SelfHosted.Notification.Services;
-using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Notification;
 [ApiController]
 [Route("[controller]")]
 public class NotificationsController : ControllerBase
 {
-    private readonly INotificationService _notificationService;
-    private readonly IHubService _hubService;
+    /*private readonly IHubService _notificationService;
+    private readonly IConversationService _conversationService;
 
-    public NotificationsController(INotificationService notificationService, IHubService hubService)
+    public NotificationsController(IHubService notificationService, IConversationService hubService)
     {
         _notificationService = notificationService;
-        _hubService = hubService;
+        _conversationService = hubService;
+    }
+
+    [HttpPost("groups")]
+    public IActionResult CreateGroups([FromBody] CreateConversationRequest request)
+    {
+        return Ok(_conversationService.Create(request));
     }
 
     [HttpGet("groups")]
     public IActionResult GetGroups()
     {
-        return Ok(_hubService.GetGroups());
+        return Ok(_conversationService.GetAll());
     }
 
     [HttpPost("send/all")]
@@ -39,5 +43,5 @@ public class NotificationsController : ControllerBase
 
         await _notificationService.SendToGroupAsync(groupName);
         return Ok($"Sent to all connected clients of {groupName} group.");
-    }
+    }*/
 }

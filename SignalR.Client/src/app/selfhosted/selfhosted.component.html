@@ -1,38 +1,25 @@
-<div class="container-fluid">
+<!-- <div class="container-fluid">
   <button (click)="cleanAll()">Clean Notifications</button>
 
+  Groups:
+  <ul>
+    <li *ngFor="let group of availableGroups" (click)="joinGroup(group)">
+      {{ group }}
+    </li>
+  </ul>
+
   &nbsp;
-  <button (click)="joinGroup()">Join A Group</button>&nbsp;
-  <input
-    type="text"
-    [(ngModel)]="groupName"
-    style="width: 200px"
-    [placeholder]="'hint: bunny chat box'"
-  />
   <div style="padding: 2px"></div>
 
-  <div
-    *ngIf="
-      currentHubConnectionState == hubConnectionState.Connected ||
-      currentHubConnectionState == hubConnectionState.Connecting
-    "
-  >
+  <div *ngIf="isConnected">
     <button (click)="stopConnection()">Stop Connection</button>
     <div style="padding: 2px"></div>
   </div>
 
-  <div
-    *ngIf="
-      currentHubConnectionState != hubConnectionState.Connected &&
-      currentHubConnectionState != hubConnectionState.Connecting
-    "
-  >
-    <button (click)="reconnect()">Try Reconnect</button>
+  <div *ngIf="!isConnected">
+    <button (click)="connectToSignalR()">Try Reconnect</button>
     <div style="padding: 2px"></div>
   </div>
-
-  <div>Connection Status : {{ currentHubConnectionState }}</div>
-  <div style="padding: 2px"></div>
 
   <div>
     Connection Count :
@@ -44,7 +31,6 @@
   <span *ngFor="let group of connectedGroups; let i = index"
     >{{ group }}{{ i + 1 == connectedGroups.length ? "" : ", " }}</span
   >
-  <div *ngIf="!connectedGroups || !connectedGroups.length">N/A</div>
 
   <div style="padding: 2px"></div>
 
@@ -71,4 +57,8 @@
   <div class="row" *ngIf="messages.length <= 0">
     <span>No messages</span>
   </div>
-</div>
+</div> -->
+
+<!-- <app-message-box></app-message-box> -->
+
+<app-register-user></app-register-user>
