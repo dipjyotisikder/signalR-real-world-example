@@ -13,7 +13,7 @@ public interface IUserService
 
     Task<User> UpdateUser(UpdateUserModel request);
 
-    Task<TokenModel> RefreshUserToken(RefreshUserTokenModel request);
+    TokenModel RefreshUserToken(RefreshUserTokenModel request);
 
     Task OnLineUser(bool onLine, int userId);
 

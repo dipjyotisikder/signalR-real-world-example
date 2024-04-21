@@ -35,19 +35,12 @@ public class UserService : IUserService
             _context.Users.Add(user);
         }
 
-        var refreshToken = Guid.NewGuid().ToString();
-        var token = new Token
-        {
-            RefreshToken = refreshToken,
-            TokenUserId = user.Id,
-        };
-        token.SetDefaultExpiryDate();
-
+        var token = PrepareTokenEntity(user);
         _context.Tokens.Add(token);
 
         await _context.SaveChangesAsync();
 
-        return PrepareToken(user, refreshToken);
+        return PrepareToken(user, token.RefreshToken);
     }
 
     public IEnumerable<User> GetUsers()
@@ -94,28 +87,26 @@ public class UserService : IUserService
         return user;
     }
 
-    public async Task<TokenModel> RefreshUserToken(RefreshUserTokenModel request)
+    public TokenModel RefreshUserToken(RefreshUserTokenModel request)
     {
-        var token = _context.Tokens.FirstOrDefault(x => x.RefreshToken == request.RefreshToken);
-        if (token == null)
+        var existedToken = _context.Tokens.FirstOrDefault(x => x.RefreshToken == request.RefreshToken);
+        if (existedToken == null)
         {
             return null;
         }
 
-        var user = _context.Users.FirstOrDefault(x => x.Id == token.TokenUserId);
+        var user = _context.Users.FirstOrDefault(x => x.Id == existedToken.TokenUserId);
         if (user == null)
         {
             return null;
         }
 
-        var refreshToken = Guid.NewGuid().ToString();
+        if (existedToken.IsExpired)
+        {
+            return null;
+        }
 
-        token.RefreshToken = refreshToken;
-        token.SetDefaultExpiryDate();
-
-        await _context.SaveChangesAsync();
-
-        return PrepareToken(user, refreshToken);
+        return PrepareToken(user, request.RefreshToken);
     }
 
     private static TokenModel PrepareToken(User user, string refreshToken)
@@ -131,7 +122,7 @@ public class UserService : IUserService
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName)
             },
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddMinutes(1),
             signingCredentials: credentials
         );
 
@@ -140,6 +131,13 @@ public class UserService : IUserService
             AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
             RefreshToken = refreshToken
         };
+    }
+
+    private static Token PrepareTokenEntity(User user)
+    {
+        var refreshToken = Guid.NewGuid().ToString();
+        var token = new Token(user.Id, refreshToken);
+        return token;
     }
 
     public Task TriggerUserIsTypingEvent(int conversationId, bool isTyping)

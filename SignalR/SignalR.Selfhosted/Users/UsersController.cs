@@ -35,8 +35,8 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("refreshToken")]
-    public async Task<IActionResult> RefreshToken([FromBody] RefreshUserTokenModel request)
+    public IActionResult RefreshToken([FromBody] RefreshUserTokenModel request)
     {
-        return Ok(await _userService.RefreshUserToken(request));
+        return Ok(_userService.RefreshUserToken(request));
     }
 }

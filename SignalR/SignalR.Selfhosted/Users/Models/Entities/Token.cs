@@ -6,6 +6,13 @@ namespace SignalR.SelfHosted.Users.Models.Entities;
 
 public class Token
 {
+    public Token(int tokenUserId, string refreshToken)
+    {
+        ExpireAt = DateTime.UtcNow.AddDays(10);
+        TokenUserId = tokenUserId;
+        RefreshToken = refreshToken;
+    }
+
     public string RefreshToken { get; set; }
 
     public int TokenUserId { get; set; }
@@ -13,8 +20,6 @@ public class Token
     public DateTime ExpireAt { get; private set; }
 
     public bool IsExpired => ExpireAt <= DateTime.UtcNow;
-
-    public void SetDefaultExpiryDate() => ExpireAt = DateTime.UtcNow.AddDays(10);
 }
 
 public class TokenConfiguration : IEntityTypeConfiguration<Token>
@@ -22,5 +27,6 @@ public class TokenConfiguration : IEntityTypeConfiguration<Token>
     public void Configure(EntityTypeBuilder<Token> builder)
     {
         builder.HasKey(x => x.RefreshToken);
+        builder.Property(x => x.RefreshToken).ValueGeneratedNever();
     }
 }
