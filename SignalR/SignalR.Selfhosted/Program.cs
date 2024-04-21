@@ -6,12 +6,13 @@ using Microsoft.IdentityModel.Tokens;
 using SignalR.Common.Constants;
 using SignalR.SelfHosted;
 using SignalR.SelfHosted.Messages.Services;
-using SignalR.SelfHosted.Notification;
-using SignalR.SelfHosted.Notification.Services;
-using SignalR.SelfHosted.Notifications.Services;
+using SignalR.SelfHosted.Hubs;
+using SignalR.SelfHosted.Hubs.Services;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -44,9 +45,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase(builder.Configuration.GetConnectionString("InMemory")));
+
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
-builder.Services.AddSingleton<IDataContext, DataContext>();
+builder.Services.AddScoped<IDataContext, DataContext>();
 builder.Services.AddScoped<IHubService, HubService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();

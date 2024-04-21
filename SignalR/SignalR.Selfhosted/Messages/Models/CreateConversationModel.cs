@@ -1,6 +1,6 @@
 ﻿namespace SignalR.SelfHosted.Messages.Models
 {
-    public class CreateConversationRequest
+    public class CreateConversationModel
     {
         public string Title { get; set; }
     }

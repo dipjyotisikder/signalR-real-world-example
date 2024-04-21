@@ -8,5 +8,5 @@ public class UserModel
 
     public string PhotoUrl { get; set; }
 
-    public bool OnLine { get; set; }
+    public bool IsTyping { get; set; } = false;
 }

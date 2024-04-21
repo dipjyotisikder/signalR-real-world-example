@@ -164,7 +164,8 @@
 
 .typing-head img {
   border-radius: 50px;
-  width: 20px;
+  width: 15px;
+  margin-left: 5px;
 }
 
 .typing .dot {
@@ -172,7 +173,7 @@
   background-color: #6cad96;
   border-radius: 50%;
   height: 7px;
-  margin-right: 4px;
+  margin-right: 5px;
   vertical-align: middle;
   width: 7px;
   display: inline-block;
@@ -190,9 +191,9 @@
   animation-delay: 400ms;
 }
 
-.typing .dot:last-child {
-  margin-right: 0;
-}
+/* .typing .dot:last-child {
+  margin-right: 4px;
+} */
 
 @keyframes mercuryTypingAnimation {
   0% {

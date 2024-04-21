@@ -1,11 +1,11 @@
 ﻿using SignalR.Common.Constants;
 using SignalR.SelfHosted.Messages.Models;
-using SignalR.SelfHosted.Notification.Services;
-using SignalR.SelfHosted.Notifications.Services;
+using SignalR.SelfHosted.Hubs.Services;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SignalR.SelfHosted.Messages.Models.Entities;
 
 namespace SignalR.SelfHosted.Messages.Services;
 
@@ -28,12 +28,12 @@ public class MessageService : IMessageService
         _currentUser = currentUser;
     }
 
-    public async Task<MessageModel> Create(CreateMessageRequest request)
+    public async Task<MessageModel> Create(CreateMessageModel request)
     {
         // CREATE MESSAGE
         var message = new Message
         {
-            Id = _context.Messages.Count + 1,
+            Id = _context.Messages.Count() + 1,
             CreatedAt = DateTime.UtcNow,
             Text = request.Text,
             ConversationId = request.ConversationId,
@@ -52,6 +52,7 @@ public class MessageService : IMessageService
             });
 
         _context.MessageAudiences.AddRange(messageAudiences);
+        await _context.SaveChangesAsync();
 
         var messageModel = GetMessageModel(message.Id);
 

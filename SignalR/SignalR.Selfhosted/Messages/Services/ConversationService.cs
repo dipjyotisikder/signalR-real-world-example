@@ -1,13 +1,13 @@
 ﻿using SignalR.Common.Constants;
 using SignalR.SelfHosted.Messages.Models;
-using SignalR.SelfHosted.Notification.Services;
-using SignalR.SelfHosted.Notifications.Services;
+using SignalR.SelfHosted.Hubs.Services;
 using SignalR.SelfHosted.Users.Models;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SignalR.SelfHosted.Messages.Models.Entities;
 
 namespace SignalR.SelfHosted.Messages.Services;
 
@@ -27,13 +27,13 @@ public class ConversationService : IConversationService
         _hubService = hubService;
     }
 
-    public ConversationModel Create(CreateConversationRequest request)
+    public async Task<ConversationModel> Create(CreateConversationModel request)
     {
         var currentUserId = _currentUser.Id;
 
         var conversation = new Conversation
         {
-            Id = _context.Conversations.Count + 1,
+            Id = _context.Conversations.Count() + 1,
             CreatedAt = DateTime.UtcNow,
             Title = request.Title,
             CreatorUserId = currentUserId,
@@ -47,6 +47,8 @@ public class ConversationService : IConversationService
             AudienceUserId = currentUserId
         });
 
+        await _context.SaveChangesAsync();
+
         var creatorUser = _context.Users
             .Where(x => x.Id == conversation.CreatorUserId)
             .Select(x => new UserModel
@@ -54,7 +56,6 @@ public class ConversationService : IConversationService
                 Id = x.Id,
                 FullName = x.FullName,
                 PhotoUrl = x.PhotoUrl,
-                OnLine = x.OnLine
             }).FirstOrDefault();
 
         return new ConversationModel
@@ -81,7 +82,6 @@ public class ConversationService : IConversationService
                    {
                        Id = cu.Id,
                        FullName = cu.FullName,
-                       OnLine = cu.OnLine,
                        PhotoUrl = cu.PhotoUrl
                    }
                };
@@ -105,6 +105,8 @@ public class ConversationService : IConversationService
                 ConversationId = conversation.Id
             });
 
+            await _context.SaveChangesAsync();
+
             // SEND CONNECTING USER TO ALL WHO BELONG TO THIS CONVERSATION.
             var conversationAudiences = _context.ConversationAudiences
                 .Where(x => x.ConversationId == conversationId)
@@ -115,7 +117,6 @@ public class ConversationService : IConversationService
                 {
                     Id = x.Id,
                     FullName = x.FullName,
-                    OnLine = x.OnLine,
                     PhotoUrl = x.PhotoUrl
                 }).First(x => x.Id == _currentUser.Id);
 
@@ -131,7 +132,6 @@ public class ConversationService : IConversationService
                         select new UserModel
                         {
                             Id = au.Id,
-                            OnLine = au.OnLine,
                             FullName = au.FullName,
                             PhotoUrl = au.PhotoUrl,
                         };
@@ -142,7 +142,6 @@ public class ConversationService : IConversationService
             {
                 Id = x.Id,
                 FullName = x.FullName,
-                OnLine = x.OnLine,
                 PhotoUrl = x.PhotoUrl,
             }).FirstOrDefault();
 
@@ -170,7 +169,6 @@ public class ConversationService : IConversationService
                            {
                                Id = cu.Id,
                                FullName = cu.FullName,
-                               OnLine = cu.OnLine,
                                PhotoUrl = cu.PhotoUrl,
                            }
                        };

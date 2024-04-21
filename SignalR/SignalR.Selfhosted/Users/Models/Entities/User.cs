@@ -1,4 +1,7 @@
-﻿namespace SignalR.SelfHosted.Users.Models;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+
+namespace SignalR.SelfHosted.Users.Models.Entities;
 
 public class User
 {
@@ -23,5 +26,15 @@ public class User
     {
         FullName = fullName;
         FullNameNormalized = fullName.ToUpper();
+    }
+}
+
+public class UserConfiguration : IEntityTypeConfiguration<User>
+{
+    public void Configure(EntityTypeBuilder<User> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedNever();
+
     }
 }

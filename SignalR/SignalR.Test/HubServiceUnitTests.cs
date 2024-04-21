@@ -1,5 +1,5 @@
 using FluentAssertions;
-using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Hubs.Services;
 
 namespace SignalR.SelfHosted.UnitTests
 {

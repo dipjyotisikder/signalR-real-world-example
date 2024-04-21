@@ -1,8 +1,8 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
-using SignalR.SelfHosted.Notification;
-using SignalR.SelfHosted.Notification.Services;
+using SignalR.SelfHosted.Hubs;
+using SignalR.SelfHosted.Hubs.Services;
 
 namespace SignalR.SelfHosted.UnitTests
 {

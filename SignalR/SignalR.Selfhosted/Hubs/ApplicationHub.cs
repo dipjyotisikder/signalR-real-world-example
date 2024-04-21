@@ -5,7 +5,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Notification;
+namespace SignalR.SelfHosted.Hubs;
 
 [Authorize]
 public class ApplicationHub : Hub
@@ -45,8 +45,8 @@ public class ApplicationHub : Hub
             base.OnDisconnectedAsync(exception));
     }
 
-    public Task UserIsTyping(int conversationId)
+    public Task UserIsTyping(int conversationId, bool isTyping)
     {
-        return _userService.TriggerUserIsTypingEvent(conversationId);
+        return _userService.TriggerUserIsTypingEvent(conversationId, isTyping);
     }
 }

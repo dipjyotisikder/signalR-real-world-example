@@ -5,5 +5,5 @@ namespace SignalR.SelfHosted.Messages.Services;
 
 public interface IMessageService
 {
-    Task<MessageModel> Create(CreateMessageRequest request);
+    Task<MessageModel> Create(CreateMessageModel request);
 }

@@ -4,7 +4,7 @@ using SignalR.SelfHosted.Messages.Models;
 using SignalR.SelfHosted.Messages.Services;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Notification;
+namespace SignalR.SelfHosted.Hubs;
 
 [Authorize]
 [ApiController]
@@ -21,9 +21,9 @@ public class MessagingController : ControllerBase
     }
 
     [HttpPost("conversations")]
-    public IActionResult CreateConversation([FromBody] CreateConversationRequest request)
+    public async Task<IActionResult> CreateConversation([FromBody] CreateConversationModel request)
     {
-        return Ok(_conversationService.Create(request));
+        return Ok(await _conversationService.Create(request));
     }
 
     [HttpGet("conversations")]
@@ -45,7 +45,7 @@ public class MessagingController : ControllerBase
     }
 
     [HttpPost("conversations/{conversationId}/messages")]
-    public async Task<IActionResult> GetMessages([FromBody] CreateMessageRequest request)
+    public async Task<IActionResult> GetMessages([FromBody] CreateMessageModel request)
     {
         return Ok(await _messageService.Create(request));
     }

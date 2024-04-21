@@ -1,4 +1,5 @@
 ﻿using SignalR.SelfHosted.Users.Models;
+using SignalR.SelfHosted.Users.Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,13 +9,13 @@ public interface IUserService
 {
     IEnumerable<User> GetUsers();
 
-    TokenModel CreateUser(CreateUserRequest request);
+    Task<TokenModel> CreateUser(CreateUserModel request);
 
-    User UpdateUser(UpdateUserRequest request);
+    Task<User> UpdateUser(UpdateUserModel request);
 
-    TokenModel RefreshUserToken(RefreshUserTokenRequest request);
+    Task<TokenModel> RefreshUserToken(RefreshUserTokenModel request);
 
     Task OnLineUser(bool onLine, int userId);
 
-    Task TriggerUserIsTypingEvent(int conversationId);
+    Task TriggerUserIsTypingEvent(int conversationId, bool isTyping);
 }

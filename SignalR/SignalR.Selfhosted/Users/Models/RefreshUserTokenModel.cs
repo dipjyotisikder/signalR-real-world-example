@@ -1,6 +1,6 @@
 ﻿namespace SignalR.SelfHosted.Users.Models;
 
-public class RefreshUserTokenRequest
+public class RefreshUserTokenModel
 {
     public string RefreshToken { get; set; }
 }

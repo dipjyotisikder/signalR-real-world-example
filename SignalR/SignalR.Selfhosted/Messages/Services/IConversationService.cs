@@ -12,5 +12,5 @@ public interface IConversationService
 
     Task<ConversationAudienceModel> GetAudiences(int conversationId);
 
-    ConversationModel Create(CreateConversationRequest request);
+    Task<ConversationModel> Create(CreateConversationModel request);
 }
