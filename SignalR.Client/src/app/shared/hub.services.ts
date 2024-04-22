@@ -32,7 +32,8 @@ export class HubService {
         selfHostedConstants.SIGNALR_ENDPOINT,
         <signalR.IHttpConnectionOptions>{
           accessTokenFactory: () => this.authService.getAccessToken(),
-        }
+          httpClient: new CustomHttpClient(this.authService)
+        },
       )
       .withAutomaticReconnect()
       .build();
@@ -97,5 +98,43 @@ export class HubService {
       conversationId,
       isTyping
     );
+  }
+}
+
+class CustomHttpClient extends signalR.DefaultHttpClient {
+  constructor(private authService: AuthService) {
+    super(console);
+  }
+
+  public override async send(request: signalR.HttpRequest): Promise<signalR.HttpResponse> {
+    this.addTokenToRequest(request);
+
+    try {
+      return await super.send(request);
+    } catch (er) {
+      if (er instanceof signalR.HttpError) {
+        const error = er as signalR.HttpError;
+        if (error.statusCode == 401) {
+          await this.authService.refreshToken();
+          this.addTokenToRequest(request);
+        }
+      } else {
+        throw er;
+      }
+    }
+
+    return super.send(request);
+  }
+
+  private addTokenToRequest(request: signalR.HttpRequest): signalR.HttpRequest {
+    debugger
+    request.content = request.content;
+
+    const accessToken = this.authService.getAccessToken();
+    if (accessToken) {
+      request.headers = { ...request.headers, ...{ Authorization: `Bearer ${accessToken}` } }
+    }
+
+    return request;
   }
 }

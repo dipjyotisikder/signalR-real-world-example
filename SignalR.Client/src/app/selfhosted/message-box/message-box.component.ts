@@ -150,6 +150,6 @@ export class MessageBoxComponent implements OnInit {
       if (this.typingFocused) {
         this.conversationAudience && this.hubService.triggerUserIsTypingEvent(this.conversationAudience.id, true);
       }
-    }, 600);
+    }, 1000);
   }
 }

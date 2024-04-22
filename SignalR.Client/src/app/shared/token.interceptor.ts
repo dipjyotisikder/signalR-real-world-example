@@ -32,18 +32,6 @@ export class TokenInterceptor implements HttpInterceptor {
     );
   }
 
-  private addTokenToRequest(request: HttpRequest<any>): HttpRequest<any> {
-    const accessToken = this.authService.getAccessToken();
-    if (accessToken) {
-      return request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-    }
-    return request;
-  }
-
   private handle401Error(
     request: HttpRequest<any>,
     next: HttpHandler
@@ -63,5 +51,17 @@ export class TokenInterceptor implements HttpInterceptor {
         return throwError(() => refreshTokenError);
       })
     );
+  }
+
+  private addTokenToRequest(request: HttpRequest<any>): HttpRequest<any> {
+    const accessToken = this.authService.getAccessToken();
+    if (accessToken) {
+      return request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    }
+    return request;
   }
 }
