@@ -20,8 +20,6 @@ public class User
 
     public string PhotoUrl { get; set; }
 
-    public bool OnLine { get; set; }
-
     public void SetFullName(string fullName)
     {
         FullName = fullName;

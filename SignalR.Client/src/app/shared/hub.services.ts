@@ -127,7 +127,6 @@ class CustomHttpClient extends signalR.DefaultHttpClient {
   }
 
   private addTokenToRequest(request: signalR.HttpRequest): signalR.HttpRequest {
-    debugger
     request.content = request.content;
 
     const accessToken = this.authService.getAccessToken();

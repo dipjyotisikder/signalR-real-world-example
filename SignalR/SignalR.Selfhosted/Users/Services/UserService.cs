@@ -48,28 +48,6 @@ public class UserService : IUserService
         return _context.Users;
     }
 
-    public async Task OnLineUser(bool onLine, int userId)
-    {
-        var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-        if (user is not null)
-        {
-            user.OnLine = onLine;
-        }
-
-        var conversationIds = _context.ConversationAudiences
-            .Where(x => x.AudienceUserId == userId)
-            .Select(x => x.ConversationId).Distinct();
-
-        var audienceUserIds = _context.ConversationAudiences
-            .Where(x => conversationIds.Contains(x.ConversationId))
-            .Select(x => x.AudienceUserId.ToString()).Distinct();
-
-        await _hubService.SendToGroupsAsync(
-            groups: audienceUserIds,
-            eventName: HubEventName.Create(HubConstants.Events.USER_IS_ONLINE),
-            userId);
-    }
-
     public async Task<User> UpdateUser(UpdateUserModel request)
     {
         var user = _context.Users.Where(x => x.Id == request.Id).FirstOrDefault();
@@ -80,7 +58,6 @@ public class UserService : IUserService
 
         user.SetFullName(request.FullName);
         user.PhotoUrl = request.PhotoUrl;
-        user.OnLine = request.Active;
 
         await _context.SaveChangesAsync();
 

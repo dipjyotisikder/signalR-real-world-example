@@ -27,7 +27,6 @@ public class ApplicationHub : Hub
         if (parsed)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, claim.Value);
-            await _userService.OnLineUser(true, userId);
         }
 
         await base.OnConnectedAsync();
