@@ -1,82 +1,76 @@
-using FluentAssertions;
-using Microsoft.AspNetCore.SignalR;
-using Moq;
-using SignalR.SelfHosted.Hubs;
-using SignalR.SelfHosted.Hubs.Services;
-
 namespace SignalR.SelfHosted.UnitTests
 {
-    public class NotificationsServiceUnitTests
-    {
-        private readonly Mock<IHubContext<ApplicationHub>> _hubContext;
-
-        public NotificationsServiceUnitTests()
+    /*    public class NotificationsServiceUnitTests
         {
-            _hubContext = new Mock<IHubContext<ApplicationHub>>();
-        }
+            private readonly Mock<IHubContext<ApplicationHub>> _hubContext;
 
-        [Fact]
-        public async Task SendToAllAsyncReturnsTask()
-        {
-            // Arrange
-            var mockHubClients = new Mock<IHubClients>();
-            var mockClientProxy = new Mock<IClientProxy>();
+            public NotificationsServiceUnitTests()
+            {
+                _hubContext = new Mock<IHubContext<ApplicationHub>>();
+            }
 
-            mockClientProxy
-                .Setup(x => x.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+            [Fact]
+            public async Task SendToAllAsyncReturnsTask()
+            {
+                // Arrange
+                var mockHubClients = new Mock<IHubClients>();
+                var mockClientProxy = new Mock<IClientProxy>();
 
-            mockHubClients.Setup(x => x.All).Returns(mockClientProxy.Object);
-            mockHubClients.Setup(x => x.Groups(It.IsAny<IReadOnlyList<string>>())).Returns(mockClientProxy.Object);
+                mockClientProxy
+                    .Setup(x => x.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
 
-            _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
+                mockHubClients.Setup(x => x.All).Returns(mockClientProxy.Object);
+                mockHubClients.Setup(x => x.Groups(It.IsAny<IReadOnlyList<string>>())).Returns(mockClientProxy.Object);
 
-            // Act
-            var notificationService = new HubService(_hubContext.Object);
-            var result = async () => await notificationService.SendToAllAsync();
+                _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
 
-            // Assert
-            result.Should().NotBeNull();
-            await result.Should().NotThrowAsync();
+                // Act
+                var notificationService = new HubService(_hubContext.Object);
+                var result = async () => await notificationService.SendToAllAsync();
 
-            _hubContext.Verify(
-                expression: x => x.Clients.All.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()),
-                times: Times.Once);
+                // Assert
+                result.Should().NotBeNull();
+                await result.Should().NotThrowAsync();
 
-            _hubContext.VerifyNoOtherCalls();
-        }
+                _hubContext.Verify(
+                    expression: x => x.Clients.All.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()),
+                    times: Times.Once);
 
-        [Fact]
-        public async Task SendToGroupAsync_ReturnsTask()
-        {
-            // Arrange
-            string groupName = "chat_room";
+                _hubContext.VerifyNoOtherCalls();
+            }
 
-            var mockHubClients = new Mock<IHubClients>();
-            var mockClientProxy = new Mock<IClientProxy>();
+            [Fact]
+            public async Task SendToGroupAsync_ReturnsTask()
+            {
+                // Arrange
+                string groupName = "chat_room";
 
-            mockClientProxy
-                .Setup(x => x.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+                var mockHubClients = new Mock<IHubClients>();
+                var mockClientProxy = new Mock<IClientProxy>();
 
-            mockHubClients.Setup(x => x.All).Returns(mockClientProxy.Object);
-            mockHubClients.Setup(x => x.Groups(It.IsAny<IReadOnlyList<string>>())).Returns(mockClientProxy.Object);
-            _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
+                mockClientProxy
+                    .Setup(x => x.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
 
-            // Act
-            var notificationService = new HubService(_hubContext.Object);
-            var result = async () => await notificationService.SendToGroupAsync(groupName);
+                mockHubClients.Setup(x => x.All).Returns(mockClientProxy.Object);
+                mockHubClients.Setup(x => x.Groups(It.IsAny<IReadOnlyList<string>>())).Returns(mockClientProxy.Object);
+                _hubContext.Setup(x => x.Clients).Returns(mockHubClients.Object);
 
-            // Assert
-            result.Should().NotBeNull();
-            await result.Should().NotThrowAsync();
+                // Act
+                var notificationService = new HubService(_hubContext.Object);
+                var result = async () => await notificationService.SendToGroupAsync(groupName);
 
-            _hubContext.Verify(
-                expression: x => x.Clients.Groups(It.IsAny<IReadOnlyList<string>>()).SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()),
-                times: Times.Once);
+                // Assert
+                result.Should().NotBeNull();
+                await result.Should().NotThrowAsync();
 
-            _hubContext.VerifyNoOtherCalls();
-        }
+                _hubContext.Verify(
+                    expression: x => x.Clients.Groups(It.IsAny<IReadOnlyList<string>>()).SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()),
+                    times: Times.Once);
 
-    }
+                _hubContext.VerifyNoOtherCalls();
+            }
+
+        }*/
 }

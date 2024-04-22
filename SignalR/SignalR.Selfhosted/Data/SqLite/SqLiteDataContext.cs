@@ -3,14 +3,14 @@ using SignalR.SelfHosted.Messages.Models.Entities;
 using SignalR.SelfHosted.Users.Models.Entities;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted;
+namespace SignalR.SelfHosted.Data.SqLite;
 
 /// <summary>
 /// Class to store data.
 /// </summary>
-public class DataContext : DbContext, IDataContext
+public class SqLiteDataContext : DbContext, IDataContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    public SqLiteDataContext(DbContextOptions<SqLiteDataContext> options) : base(options)
     {
 
     }

@@ -4,16 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SignalR.Common.Constants;
-using SignalR.SelfHosted;
 using SignalR.SelfHosted.Messages.Services;
 using SignalR.SelfHosted.Hubs;
 using SignalR.SelfHosted.Hubs.Services;
 using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using SignalR.SelfHosted.Data.SqLite;
 
+// SERVICE CONTAINER
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -45,11 +44,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase(builder.Configuration.GetConnectionString("InMemory")));
+builder.Services
+    .AddSqLiteDatabase(builder.Configuration);
+// .AddInMemoryDatabase(builder.Configuration);
 
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
-builder.Services.AddScoped<IDataContext, DataContext>();
 builder.Services.AddScoped<IHubService, HubService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
@@ -57,6 +57,8 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddSignalR();
 
+
+// PIPELINE
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.

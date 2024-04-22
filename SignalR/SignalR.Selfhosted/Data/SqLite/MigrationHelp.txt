@@ -1,0 +1,4 @@
+﻿Create New Migration:
+add-migration InitialCreate -context SqLiteDataContext -o Data/SqLite/Migrations
+
+Apply To DB:
