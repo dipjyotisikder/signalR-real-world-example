@@ -41,7 +41,8 @@ public interface IDataContext
     DbSet<Token> Tokens { get; set; }
 
     /// <summary>
-    /// Saves informations.
+    /// Represents the change tracking and save method.
     /// </summary>
+    /// <returns>Indicator if change occurred.</returns>
     Task<int> SaveChangesAsync();
 }

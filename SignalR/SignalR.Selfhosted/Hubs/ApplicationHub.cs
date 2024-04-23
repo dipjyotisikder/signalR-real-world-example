@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Hubs;
 
+/// <summary>
+/// Represents the Application SignalR hub to real-time communication.
+/// </summary>
 [Authorize]
 public class ApplicationHub : Hub
 {
@@ -44,6 +47,12 @@ public class ApplicationHub : Hub
             base.OnDisconnectedAsync(exception));
     }
 
+    /// <summary>
+    /// Represents a invokable hub method.
+    /// </summary>
+    /// <param name="conversationId">Conversation Identifier.</param>
+    /// <param name="isTyping">If an user is typing or not.</param>
+    /// <returns>A task.</returns>
     public Task UserIsTyping(int conversationId, bool isTyping)
     {
         return _userService.TriggerUserIsTypingEvent(conversationId, isTyping);
