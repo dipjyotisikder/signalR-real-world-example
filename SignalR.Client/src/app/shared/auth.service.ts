@@ -16,7 +16,7 @@ export class AuthService {
     this.hasToken()
   );
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   public hasToken(): boolean {
     return !!localStorage.getItem(this.accessTokenKey);
@@ -24,6 +24,10 @@ export class AuthService {
 
   public getAccessToken(): string | null {
     return localStorage.getItem(this.accessTokenKey);
+  }
+
+  public getRefreshToken = () => {
+    return localStorage.getItem(this.refreshTokenKey);
   }
 
   public setToken(token: string, refreshToken: string): void {
@@ -34,6 +38,7 @@ export class AuthService {
 
   public removeToken(): void {
     localStorage.removeItem(this.accessTokenKey);
+    localStorage.removeItem(this.refreshTokenKey);
     this.isAuthenticatedSubject.next(false);
   }
 
@@ -62,9 +67,11 @@ export class AuthService {
     return this.http
       .post<UserTokenModel>(
         environment.selfHostedServerURL +
-          '/' +
-          selfHostedConstants.REFRESH_TOKEN_ENDPOINT,
-        {}
+        '/' +
+        selfHostedConstants.REFRESH_TOKEN_ENDPOINT,
+        {
+          refreshToken: this.getRefreshToken()
+        }
       )
       .pipe(
         tap((response) => {

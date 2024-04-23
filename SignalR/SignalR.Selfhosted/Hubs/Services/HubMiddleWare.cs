@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System;
 using SignalR.Common.Constants;
 
-namespace SignalR.SelfHosted.Notifications.Services;
+namespace SignalR.SelfHosted.Hubs.Services;
 
 public class HubMiddleWare
 {

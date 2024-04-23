@@ -1,8 +1,7 @@
-﻿using SignalR.SelfHosted.Notifications.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Notification.Services;
+namespace SignalR.SelfHosted.Hubs.Services;
 
 public interface IHubService
 {

@@ -14,87 +14,126 @@ import { UserModel } from '../models/UserModel';
 })
 export class HubService {
   public hubConnection: signalR.HubConnection | null = null;
-  private messageIsCreatedSubject = new BehaviorSubject<MessageModel | null>(
+  private messageIsCreatedEvent = new BehaviorSubject<MessageModel | null>(
     null
   );
 
-  private userIsOnlineSubject = new BehaviorSubject<boolean | null>(null);
-  private userIsJoinedSubject = new BehaviorSubject<UserModel | null>(null);
-  private userIsTypingSubject = new BehaviorSubject<UserModel | null>(null);
+  private userIsOnlineEvent = new BehaviorSubject<boolean | null>(null);
+  private userIsJoinedEvent = new BehaviorSubject<UserModel | null>(null);
+  private userIsTypingEvent = new BehaviorSubject<UserModel | null>(null);
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   startHub() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(
         environment.selfHostedServerURL +
-          '/' +
-          selfHostedConstants.SIGNALR_ENDPOINT,
+        '/' +
+        selfHostedConstants.SIGNALR_ENDPOINT,
         <signalR.IHttpConnectionOptions>{
           accessTokenFactory: () => this.authService.getAccessToken(),
-        }
+          httpClient: new CustomHttpClient(this.authService)
+        },
       )
       .withAutomaticReconnect()
       .build();
 
     this.hubConnection
       .start()
-      .then(() => {})
-      .catch(() => {});
+      .then(() => { })
+      .catch(() => { });
 
     this.hubConnection.on(
       HubConstants.serverEvents.MESSAGE_IS_CREATED,
       (message: MessageModel) => {
-        this.messageIsCreatedSubject.next(message);
+        this.messageIsCreatedEvent.next(message);
       }
     );
 
     this.hubConnection.on(
       HubConstants.serverEvents.USER_IS_ONLINE,
       (message: boolean) => {
-        this.userIsOnlineSubject.next(message);
+        this.userIsOnlineEvent.next(message);
       }
     );
 
     this.hubConnection.on(
       HubConstants.serverEvents.USER_IS_JOINED,
       (user: UserModel) => {
-        this.userIsJoinedSubject.next(user);
+        this.userIsJoinedEvent.next(user);
       }
     );
 
     this.hubConnection.on(
       HubConstants.serverEvents.USER_IS_TYPING,
       (user: UserModel) => {
-        this.userIsTypingSubject.next(user);
+        this.userIsTypingEvent.next(user);
       }
     );
   }
 
   stopHub() {
-    this.hubConnection && this.hubConnection.stop().then(() => {});
+    this.hubConnection && this.hubConnection.stop().then(() => { });
   }
 
-  listenMessageIsCreatedEvent() {
-    return this.messageIsCreatedSubject.asObservable();
+  messageIsCreatedEventHandler() {
+    return this.messageIsCreatedEvent.asObservable();
   }
 
-  listenUserIsOnlineEvent() {
-    return this.userIsOnlineSubject.asObservable();
+  userIsOnlineEventHandler() {
+    return this.userIsOnlineEvent.asObservable();
   }
 
-  listenUserIsJoinedEvent() {
-    return this.userIsJoinedSubject.asObservable();
+  userIsJoinedEventHandler() {
+    return this.userIsJoinedEvent.asObservable();
   }
 
-  listenUserIsTypingEvent() {
-    return this.userIsTypingSubject.asObservable();
+  userIsTypingEventHandler() {
+    return this.userIsTypingEvent.asObservable();
   }
 
-  triggerUserIsTypingEvent(conversationId: number) {
+  triggerUserIsTypingEvent(conversationId: number, isTyping: boolean) {
     return this.hubConnection?.invoke(
       HubConstants.serverEvents.USER_IS_TYPING,
-      conversationId
+      conversationId,
+      isTyping
     );
+  }
+}
+
+class CustomHttpClient extends signalR.DefaultHttpClient {
+  constructor(private authService: AuthService) {
+    super(console);
+  }
+
+  public override async send(request: signalR.HttpRequest): Promise<signalR.HttpResponse> {
+    this.addTokenToRequest(request);
+
+    try {
+      return await super.send(request);
+    } catch (er) {
+      if (er instanceof signalR.HttpError) {
+        const error = er as signalR.HttpError;
+        if (error.statusCode == 401) {
+          await this.authService.refreshToken();
+          this.addTokenToRequest(request);
+        }
+      } else {
+        throw er;
+      }
+    }
+
+    return super.send(request);
+  }
+
+  private addTokenToRequest(request: signalR.HttpRequest): signalR.HttpRequest {
+    request.content = request.content;
+
+    const accessToken = this.authService.getAccessToken();
+    if (accessToken) {
+      request.headers = { ...request.headers, ...{ Authorization: `Bearer ${accessToken}` } }
+    }
+
+    return request;
   }
 }

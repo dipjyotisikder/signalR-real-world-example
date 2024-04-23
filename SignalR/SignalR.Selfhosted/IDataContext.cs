@@ -1,6 +1,7 @@
-﻿using SignalR.SelfHosted.Messages.Models;
-using SignalR.SelfHosted.Users.Models;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using SignalR.SelfHosted.Messages.Models.Entities;
+using SignalR.SelfHosted.Users.Models.Entities;
+using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted;
 
@@ -12,30 +13,35 @@ public interface IDataContext
     /// <summary>
     /// Provides all the user data.
     /// </summary>
-    List<User> Users { get; set; }
+    DbSet<User> Users { get; set; }
 
     /// <summary>
     /// Provides all the conversation data.
     /// </summary>
-    List<Conversation> Conversations { get; set; }
+    DbSet<Conversation> Conversations { get; set; }
 
     /// <summary>
     /// Provides all the conversation audience data.
     /// </summary>
-    List<ConversationAudience> ConversationAudiences { get; set; }
+    DbSet<ConversationAudience> ConversationAudiences { get; set; }
 
     /// <summary>
     /// Provides all the messages.
     /// </summary>
-    List<Message> Messages { get; set; }
+    DbSet<Message> Messages { get; set; }
 
     /// <summary>
     /// Provides all the message audiences.
     /// </summary>
-    List<MessageAudience> MessageAudiences { get; set; }
+    DbSet<MessageAudience> MessageAudiences { get; set; }
 
     /// <summary>
     /// Provides all the tokens.
     /// </summary>
-    List<Token> Tokens { get; set; }
+    DbSet<Token> Tokens { get; set; }
+
+    /// <summary>
+    /// Saves informations.
+    /// </summary>
+    Task<int> SaveChangesAsync();
 }

@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   intercept(
     request: HttpRequest<any>,
@@ -30,18 +30,6 @@ export class TokenInterceptor implements HttpInterceptor {
         }
       })
     );
-  }
-
-  private addTokenToRequest(request: HttpRequest<any>): HttpRequest<any> {
-    const accessToken = this.authService.getAccessToken();
-    if (accessToken) {
-      return request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-    }
-    return request;
   }
 
   private handle401Error(
@@ -63,5 +51,17 @@ export class TokenInterceptor implements HttpInterceptor {
         return throwError(() => refreshTokenError);
       })
     );
+  }
+
+  private addTokenToRequest(request: HttpRequest<any>): HttpRequest<any> {
+    const accessToken = this.authService.getAccessToken();
+    if (accessToken) {
+      return request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    }
+    return request;
   }
 }

@@ -1,8 +1,8 @@
 ﻿namespace SignalR.SelfHosted.Messages.Models;
 
-public class ConversationAudience
+public class CreateMessageModel
 {
     public int ConversationId { get; set; }
 
-    public int AudienceUserId { get; set; }
+    public string Text { get; set; }
 }

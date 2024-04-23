@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SignalR.Common.Constants;
-using SignalR.SelfHosted.Notification.Services;
-using SignalR.SelfHosted.Notifications.Services;
+using SignalR.SelfHosted.Hubs.Services;
 using SignalR.SelfHosted.Users.Models;
+using SignalR.SelfHosted.Users.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -26,26 +26,21 @@ public class UserService : IUserService
         _currentUser = currentUser;
     }
 
-    public TokenModel CreateUser(CreateUserRequest request)
+    public async Task<TokenModel> CreateUser(CreateUserModel request)
     {
         var user = _context.Users.FirstOrDefault(x => x.FullNameNormalized == request.FullName.ToUpper());
         if (user == null)
         {
-            user = new User(id: _context.Users.Count + 1, fullName: request.FullName, photoUrl: request.PhotoUrl);
+            user = new User(id: _context.Users.Count() + 1, fullName: request.FullName, photoUrl: request.PhotoUrl);
             _context.Users.Add(user);
         }
 
-        var refreshToken = Guid.NewGuid().ToString();
-        var token = new Token
-        {
-            RefreshToken = refreshToken,
-            TokenUserId = user.Id,
-        };
-        token.SetDefaultExpiryDate();
-
+        var token = PrepareTokenEntity(user);
         _context.Tokens.Add(token);
 
-        return PrepareToken(user, refreshToken);
+        await _context.SaveChangesAsync();
+
+        return PrepareToken(user, token.RefreshToken);
     }
 
     public IEnumerable<User> GetUsers()
@@ -53,29 +48,7 @@ public class UserService : IUserService
         return _context.Users;
     }
 
-    public async Task OnLineUser(bool onLine, int userId)
-    {
-        var user = _context.Users.Where(x => x.Id == userId).FirstOrDefault();
-        if (user is not null)
-        {
-            user.OnLine = onLine;
-        }
-
-        var conversationIds = _context.ConversationAudiences
-            .Where(x => x.AudienceUserId == userId)
-            .Select(x => x.ConversationId).Distinct();
-
-        var audienceUserIds = _context.ConversationAudiences
-            .Where(x => conversationIds.Contains(x.ConversationId))
-            .Select(x => x.AudienceUserId.ToString()).Distinct();
-
-        await _hubService.SendToGroupsAsync(
-            groups: audienceUserIds,
-            eventName: HubEventName.Create(HubConstants.Events.USER_IS_ONLINE),
-            userId);
-    }
-
-    public User UpdateUser(UpdateUserRequest request)
+    public async Task<User> UpdateUser(UpdateUserModel request)
     {
         var user = _context.Users.Where(x => x.Id == request.Id).FirstOrDefault();
         if (user == null)
@@ -85,31 +58,32 @@ public class UserService : IUserService
 
         user.SetFullName(request.FullName);
         user.PhotoUrl = request.PhotoUrl;
-        user.OnLine = request.Active;
+
+        await _context.SaveChangesAsync();
 
         return user;
     }
 
-    public TokenModel RefreshUserToken(RefreshUserTokenRequest request)
+    public TokenModel RefreshUserToken(RefreshUserTokenModel request)
     {
-        var token = _context.Tokens.FirstOrDefault(x => x.RefreshToken == request.RefreshToken);
-        if (token == null)
+        var existedToken = _context.Tokens.FirstOrDefault(x => x.RefreshToken == request.RefreshToken);
+        if (existedToken == null)
         {
             return null;
         }
 
-        var user = _context.Users.FirstOrDefault(x => x.Id == token.TokenUserId);
+        var user = _context.Users.FirstOrDefault(x => x.Id == existedToken.TokenUserId);
         if (user == null)
         {
             return null;
         }
 
-        var refreshToken = Guid.NewGuid().ToString();
+        if (existedToken.IsExpired)
+        {
+            return null;
+        }
 
-        token.RefreshToken = refreshToken;
-        token.SetDefaultExpiryDate();
-
-        return PrepareToken(user, refreshToken);
+        return PrepareToken(user, request.RefreshToken);
     }
 
     private static TokenModel PrepareToken(User user, string refreshToken)
@@ -125,7 +99,7 @@ public class UserService : IUserService
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.FullName)
             },
-            expires: DateTime.UtcNow.AddMinutes(60),
+            expires: DateTime.UtcNow.AddMinutes(1),
             signingCredentials: credentials
         );
 
@@ -136,7 +110,14 @@ public class UserService : IUserService
         };
     }
 
-    public Task TriggerUserIsTypingEvent(int conversationId)
+    private static Token PrepareTokenEntity(User user)
+    {
+        var refreshToken = Guid.NewGuid().ToString();
+        var token = new Token(user.Id, refreshToken);
+        return token;
+    }
+
+    public Task TriggerUserIsTypingEvent(int conversationId, bool isTyping)
     {
         var audienceUserIds = _context.ConversationAudiences
             .Where(x => x.ConversationId == conversationId && x.AudienceUserId != _currentUser.Id)
@@ -148,8 +129,8 @@ public class UserService : IUserService
            {
                Id = x.Id,
                FullName = x.FullName,
-               OnLine = x.OnLine,
                PhotoUrl = x.PhotoUrl,
+               IsTyping = isTyping
            }).FirstOrDefault();
 
         return _hubService.SendToGroupsAsync(

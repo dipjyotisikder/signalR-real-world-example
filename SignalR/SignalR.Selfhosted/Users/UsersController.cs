@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SignalR.SelfHosted.Users.Models;
 using SignalR.SelfHosted.Users.Services;
+using System.Threading.Tasks;
 
 namespace SignalR.SelfHosted.Users;
 
@@ -22,19 +23,19 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateUsers([FromBody] CreateUserRequest request)
+    public async Task<IActionResult> CreateUsers([FromBody] CreateUserModel request)
     {
-        return Ok(_userService.CreateUser(request));
+        return Ok(await _userService.CreateUser(request));
     }
 
     [HttpPut]
-    public IActionResult UpdateUsers([FromBody] UpdateUserRequest request)
+    public async Task<IActionResult> UpdateUsers([FromBody] UpdateUserModel request)
     {
-        return Ok(_userService.UpdateUser(request));
+        return Ok(await _userService.UpdateUser(request));
     }
 
     [HttpPost("refreshToken")]
-    public IActionResult RefreshToken([FromBody] RefreshUserTokenRequest request)
+    public IActionResult RefreshToken([FromBody] RefreshUserTokenModel request)
     {
         return Ok(_userService.RefreshUserToken(request));
     }

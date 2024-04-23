@@ -1,4 +1,4 @@
-﻿namespace SignalR.SelfHosted.Notifications.Services
+﻿namespace SignalR.SelfHosted.Hubs.Services
 {
     public class HubEventName
     {

@@ -5,7 +5,7 @@
       [ngClass]="{'current-user': user.id == currentUserId}">
       <img src="{{ user.photoUrl }}" alt="{{ user.fullName }}" />
       <span class="user-name">{{ user.fullName }}</span><span *ngIf="user.id == currentUserId">(You)</span>
-      <span class="dot" [ngClass]="{ active: user.onLine, inactive: !user.onLine }"></span>
+      <!-- <span class="dot" [ngClass]="{ active: user.onLine, inactive: !user.onLine }"></span> -->
     </div>
   </div>
 
@@ -15,7 +15,7 @@
       <h4>{{conversationAudience?.title}}</h4>
     </div>
 
-    <form [formGroup]="messageForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="messageForm" (ngSubmit)="onSubmit(textInput)">
       <div *ngIf="messageListLoaded" class="chat-body">
 
         <div *ngFor="let message of messageList" class="message"
@@ -24,8 +24,11 @@
           <span class="timestamp">{{ timeTransform(message.createdAt) }}</span>
         </div>
 
+        <!-- <div class="chat-bubble"> -->
         <div class="chat-bubble" *ngIf="typingUsers.length">
-          <!-- <div class="chat-bubble"> -->
+          <!-- <span class="typing-head">
+            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Name" />
+          </span> -->
           <span *ngFor="let tUser of typingUsers" class="typing-head">
             <img src="{{ tUser.photoUrl }}" alt="{{ tUser.fullName }}" />
           </span>
@@ -39,9 +42,8 @@
       </div>
       <div class="input-group">
 
-        <input type="text" class="form-control" formControlName="text" autocomplete="off"
-          placeholder="Type your message and press enter..." (input)="onInput($event)" (blur)="onBlur($event)"
-          (focus)="onFocus($event)" />
+        <input #textInput type="text" class="form-control" formControlName="text" autocomplete="off"
+          placeholder="Type your message and press enter..." (blur)="onBlur($event)" (focus)="onFocus($event)" />
       </div>
     </form>
   </div>
