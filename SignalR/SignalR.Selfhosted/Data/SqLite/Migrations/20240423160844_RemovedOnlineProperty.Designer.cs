@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SignalR.SelfHosted.Data.SqLite;
 
@@ -10,9 +11,10 @@ using SignalR.SelfHosted.Data.SqLite;
 namespace SignalR.SelfHosted.Data.SqLite.Migrations
 {
     [DbContext(typeof(SqLiteDataContext))]
-    partial class SqLiteDataContextModelSnapshot : ModelSnapshot
+    [Migration("20240423160844_RemovedOnlineProperty")]
+    partial class RemovedOnlineProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.29");
