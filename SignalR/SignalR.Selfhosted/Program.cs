@@ -7,11 +7,11 @@ using System;
 using System.Text;
 using SignalR.Api.MessagingModule.Services;
 using SignalR.Api.UserModule.Services;
-using SignalR.Api.Infrastructure.Services;
 using SignalR.Api.Hubs.Services;
 using SignalR.Api.Data.SqLite;
 using SignalR.Api.Hubs;
 using SignalR.Api.Constants;
+using SignalR.Api.Infrastructure.DependencyInjection;
 
 // SERVICE CONTAINER
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -23,8 +23,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddSingleton<IAzureSignalRService, AzureSignalRService>();
 
 builder.Services.AddCors();
 
@@ -60,8 +58,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
-builder.Services.AddSignalR();
-
+builder.Services.AddInfrastructureDependencies();
 
 // PIPELINE
 WebApplication app = builder.Build();
