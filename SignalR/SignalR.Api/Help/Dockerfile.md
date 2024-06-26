@@ -6,16 +6,16 @@ WORKDIR /app
 
 #COPY
 COPY ["SignalR.Common/SignalR.Common.csproj", "SignalR.Common/"]
-COPY ["SignalR.Selfhosted/SignalR.Selfhosted.csproj", "SignalR.Selfhosted/"]
+COPY ["SignalR.Api/SignalR.Api.csproj", "SignalR.Api/"]
 
 #RESTORE
-RUN dotnet restore "SignalR.Selfhosted/SignalR.Selfhosted.csproj"
+RUN dotnet restore "SignalR.Api/SignalR.Api.csproj"
 
-WORKDIR /app/SignalR.Selfhosted
+WORKDIR /app/SignalR.Api
 
 COPY . .
 
-RUN dotnet publish "SignalR.Selfhosted/SignalR.Selfhosted.csproj" -c Release -o /app/publish/
+RUN dotnet publish "SignalR.Api/SignalR.Api.csproj" -c Release -o /app/publish/
 #BUILD STAGE ENDED
 
 #RUNTIME STAGE START
@@ -33,5 +33,5 @@ EXPOSE 443
 
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "SignalR.Selfhosted.dll"]
+ENTRYPOINT ["dotnet", "SignalR.Api.dll"]
 #BUILD STAGE ENDED

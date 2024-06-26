@@ -2,24 +2,22 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SignalR.Api.Data.SqLite;
 
 #nullable disable
 
-namespace SignalR.SelfHosted.Data.SqLite.Migrations
+namespace SignalR.Api.Data.SqLite.Migrations
 {
     [DbContext(typeof(SqLiteDataContext))]
-    [Migration("20240423160844_RemovedOnlineProperty")]
-    partial class RemovedOnlineProperty
+    partial class SqLiteDataContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.29");
 
-            modelBuilder.Entity("SignalR.SelfHosted.Messages.Models.Entities.Conversation", b =>
+            modelBuilder.Entity("SignalR.Api.Messages.Models.Entities.Conversation", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -38,7 +36,7 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
                     b.ToTable("Conversations");
                 });
 
-            modelBuilder.Entity("SignalR.SelfHosted.Messages.Models.Entities.ConversationAudience", b =>
+            modelBuilder.Entity("SignalR.Api.Messages.Models.Entities.ConversationAudience", b =>
                 {
                     b.Property<int>("ConversationId")
                         .HasColumnType("INTEGER");
@@ -51,7 +49,7 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
                     b.ToTable("ConversationAudiences");
                 });
 
-            modelBuilder.Entity("SignalR.SelfHosted.Messages.Models.Entities.Message", b =>
+            modelBuilder.Entity("SignalR.Api.Messages.Models.Entities.Message", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
@@ -73,7 +71,7 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("SignalR.SelfHosted.Messages.Models.Entities.MessageAudience", b =>
+            modelBuilder.Entity("SignalR.Api.Messages.Models.Entities.MessageAudience", b =>
                 {
                     b.Property<int>("MessageId")
                         .HasColumnType("INTEGER");
@@ -89,7 +87,7 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
                     b.ToTable("MessageAudiences");
                 });
 
-            modelBuilder.Entity("SignalR.SelfHosted.Users.Models.Entities.Token", b =>
+            modelBuilder.Entity("SignalR.Api.Users.Models.Entities.Token", b =>
                 {
                     b.Property<string>("RefreshToken")
                         .HasColumnType("TEXT");
@@ -105,7 +103,7 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("SignalR.SelfHosted.Users.Models.Entities.User", b =>
+            modelBuilder.Entity("SignalR.Api.Users.Models.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("INTEGER");
