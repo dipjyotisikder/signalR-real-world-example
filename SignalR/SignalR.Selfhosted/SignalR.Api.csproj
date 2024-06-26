@@ -27,10 +27,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\SignalR.Common\SignalR.Common.csproj" />
-	</ItemGroup>
-	
-	<ItemGroup>
 	  <Folder Include="Data\SqLite\Migrations\" />
 	</ItemGroup>
 

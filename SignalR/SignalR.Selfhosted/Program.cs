@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using SignalR.Common.Constants;
 using System;
 using System.Text;
 using SignalR.Api.MessagingModule.Services;
@@ -12,6 +11,7 @@ using SignalR.Api.Infrastructure.Services;
 using SignalR.Api.Hubs.Services;
 using SignalR.Api.Data.SqLite;
 using SignalR.Api.Hubs;
+using SignalR.Api.Constants;
 
 // SERVICE CONTAINER
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

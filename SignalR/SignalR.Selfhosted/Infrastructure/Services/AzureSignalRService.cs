@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using System;
 using Microsoft.Azure.SignalR.Management;
 using Microsoft.AspNetCore.Http.Connections;
-using SignalR.Common.Constants;
-using SignalR.Common.Models;
 using Azure.Core.Serialization;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using SignalR.Api.UserModule.Services;
+using SignalR.Api.Constants;
 
 namespace SignalR.Api.Infrastructure.Services;
 
@@ -20,13 +19,14 @@ public class AzureSignalRService : IAzureSignalRService
     private readonly ServiceHubContext _serviceHubContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IConfiguration _configuration;
+    private readonly ICurrentUser _currentUser;
 
     /// <summary>
     /// Constractor for <see cref="AzureSignalRService"/>.
     /// </summary>
     /// <param name="httpContextAccessor"></param>
     /// <param name="configuration"></param>
-    public AzureSignalRService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+    public AzureSignalRService(IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ICurrentUser currentUser)
     {
         _httpContextAccessor = httpContextAccessor;
 
@@ -49,37 +49,29 @@ public class AzureSignalRService : IAzureSignalRService
             .GetResult();
 
         _configuration = configuration;
+        _currentUser = currentUser;
     }
 
     /// <inheritdoc/>
     public async Task<NegotiationResponse> AddToGroupAsync(string groupName)
     {
-        var userId = $"User.{Guid.NewGuid()}";
         var negotiationResponse = await _serviceHubContext
             .NegotiateAsync(new NegotiationOptions
             {
                 HttpContext = _httpContextAccessor.HttpContext,
-                UserId = userId
+                UserId = _currentUser.Id.ToString(),
             });
 
-        await _serviceHubContext.UserGroups.AddToGroupAsync(userId, groupName);
+        await _serviceHubContext.UserGroups.AddToGroupAsync(_currentUser.Id.ToString(), groupName);
 
         return negotiationResponse;
     }
 
     /// <inheritdoc/>
-    public async Task SendToGroupAsync(string groupName)
+    public async Task SendToGroupAsync<T>(string groupName, T message)
     {
         await _serviceHubContext.Clients
             .Group(groupName)
-            .SendCoreAsync(AzureHubConstants.NotificationCreatedEvent,
-                new object[]{
-                        new NotificationMessageModel
-                        {
-                            Id = 1,
-                            Content = "Some Content",
-                            Title = "Some Title"
-                        }
-                });
+            .SendCoreAsync(AzureHubConstants.NotificationCreatedEvent, new object[] { message });
     }
 }

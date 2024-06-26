@@ -1,5 +1,4 @@
-﻿using SignalR.Common.Constants;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SignalR.Api.Hubs.Services;
@@ -7,6 +6,7 @@ using SignalR.Api.MessagingModule.Models;
 using SignalR.Api.UserModule.Services;
 using SignalR.Api.MessagingModule.Models.Entities;
 using SignalR.Api.UserModule.Models;
+using SignalR.Api.Constants;
 
 namespace SignalR.Api.MessagingModule.Services;
 

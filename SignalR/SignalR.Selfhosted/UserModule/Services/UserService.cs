@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using SignalR.Api.Constants;
 using SignalR.Api.Hubs.Services;
 using SignalR.Api.UserModule.Models;
 using SignalR.Api.UserModule.Models.Entities;
-using SignalR.Common.Constants;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;

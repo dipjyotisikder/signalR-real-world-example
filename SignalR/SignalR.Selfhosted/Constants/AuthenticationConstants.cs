@@ -1,4 +1,4 @@
-﻿namespace SignalR.Common.Constants
+﻿namespace SignalR.Api.Constants
 {
     /// <summary>
     /// Represents an static class to hold constants.

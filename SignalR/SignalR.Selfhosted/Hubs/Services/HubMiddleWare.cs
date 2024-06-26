@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
-using SignalR.Common.Constants;
+using SignalR.Api.Constants;
 
 namespace SignalR.Api.Hubs.Services;
 

@@ -19,7 +19,8 @@ namespace SignalR.Api.Infrastructure.Services
         /// Send to all of the clients connected to a certain group.
         /// </summary>
         /// <param name="groupName"></param>
+        /// <param name="message"></param>
         /// <returns>A completed task.</returns>
-        Task SendToGroupAsync(string groupName);
+        Task SendToGroupAsync<T>(string groupName, T message);
     }
 }
