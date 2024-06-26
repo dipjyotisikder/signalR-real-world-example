@@ -11,8 +11,8 @@ using SignalR.Api.Data.SqLite;
 namespace SignalR.SelfHosted.Data.SqLite.Migrations
 {
     [DbContext(typeof(SqLiteDataContext))]
-    [Migration("20240421185521_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240423160844_RemovedOnlineProperty")]
+    partial class RemovedOnlineProperty
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -115,9 +115,6 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
 
                     b.Property<string>("FullNameNormalized")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("OnLine")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("TEXT");

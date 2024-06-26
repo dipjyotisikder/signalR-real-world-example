@@ -3,14 +3,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using SignalR.Common.Constants;
-using SignalR.SelfHosted.Messages.Services;
-using SignalR.SelfHosted.Hubs;
-using SignalR.SelfHosted.Hubs.Services;
-using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Text;
-using SignalR.SelfHosted.Data.SqLite;
+using SignalR.Api.MessagingModule.Services;
+using SignalR.Api.UserModule.Services;
+using SignalR.Api.Hubs.Services;
+using SignalR.Api.Data.SqLite;
+using SignalR.Api.Hubs;
+using SignalR.Api.Constants;
+using SignalR.Api.Infrastructure.DependencyInjection;
 
 // SERVICE CONTAINER
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -25,24 +26,26 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services
+    .AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = AuthenticationConstants.ISSUER,
-        ValidAudience = AuthenticationConstants.AUDIENCE,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationConstants.TOKEN_SECRET_KEY)),
-        ClockSkew = TimeSpan.Zero
-    };
-});
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = AuthenticationConstants.ISSUER,
+            ValidAudience = AuthenticationConstants.AUDIENCE,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AuthenticationConstants.TOKEN_SECRET_KEY)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services
     .AddSqLiteDatabase(builder.Configuration);
@@ -55,8 +58,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 
-builder.Services.AddSignalR();
-
+builder.Services.AddInfrastructureDependencies();
 
 // PIPELINE
 WebApplication app = builder.Build();

@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
-using SignalR.Common.Constants;
+using SignalR.Api.Constants;
 
-namespace SignalR.SelfHosted.Hubs.Services;
+namespace SignalR.Api.Hubs.Services;
 
+/// <summary>
+/// Represents the request MiddleWare to handle access-token.
+/// </summary>
 public class HubMiddleWare
 {
     private readonly RequestDelegate _next;
@@ -14,6 +17,11 @@ public class HubMiddleWare
         _next = next;
     }
 
+    /// <summary>
+    /// Represents the method to be invoked during request.
+    /// </summary>
+    /// <param name="httpContext">Request context.</param>
+    /// <returns>A completed task.</returns>
     public async Task Invoke(HttpContext httpContext)
     {
         var request = httpContext.Request;

@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SignalR.SelfHosted.Data.SqLite;
+using SignalR.Api.Data.SqLite;
 
 #nullable disable
 
@@ -113,9 +113,6 @@ namespace SignalR.SelfHosted.Data.SqLite.Migrations
 
                     b.Property<string>("FullNameNormalized")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool>("OnLine")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("TEXT");

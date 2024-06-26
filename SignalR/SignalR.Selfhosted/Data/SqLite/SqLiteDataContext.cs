@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SignalR.SelfHosted.Messages.Models.Entities;
-using SignalR.SelfHosted.Users.Models.Entities;
+using SignalR.Api.MessagingModule.Models.Entities;
+using SignalR.Api.UserModule.Models.Entities;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Data.SqLite;
+namespace SignalR.Api.Data.SqLite;
 
 /// <summary>
-/// Class to store data.
+/// Represents the Database context class handle data.
 /// </summary>
 public class SqLiteDataContext : DbContext, IDataContext
 {
@@ -29,35 +29,24 @@ public class SqLiteDataContext : DbContext, IDataContext
         base.OnModelCreating(modelBuilder);
     }
 
-    /// <summary>
-    /// Provides all the user data.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<User> Users { get; set; }
 
-    /// <summary>
-    /// Provides all the tokens.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Token> Tokens { get; set; }
 
-    /// <summary>
-    /// Provides all the conversation data.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Conversation> Conversations { get; set; }
 
-    /// <summary>
-    /// Provides all the conversation audience data.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<ConversationAudience> ConversationAudiences { get; set; }
 
-    /// <summary>
-    /// Provides all the messages.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<Message> Messages { get; set; }
 
-    /// <summary>
-    /// Provides all the message audiences.
-    /// </summary>
+    /// <inheritdoc/>
     public DbSet<MessageAudience> MessageAudiences { get; set; }
 
+    /// <inheritdoc/>
     public Task<int> SaveChangesAsync() => base.SaveChangesAsync(cancellationToken: default);
 }

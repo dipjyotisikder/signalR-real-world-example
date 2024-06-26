@@ -93,6 +93,10 @@ export class HubService {
   }
 
   triggerUserIsTypingEvent(conversationId: number, isTyping: boolean) {
+    if (this.hubConnection?.state != signalR.HubConnectionState.Connected) {
+      this.startHub();
+    }
+
     return this.hubConnection?.invoke(
       HubConstants.serverEvents.USER_IS_TYPING,
       conversationId,
