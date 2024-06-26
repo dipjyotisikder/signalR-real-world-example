@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SignalR.SelfHosted.Data.SqLite
+namespace SignalR.Api.Data.SqLite
 {
     /// <summary>
     /// Presents configuration class for SqLite database.

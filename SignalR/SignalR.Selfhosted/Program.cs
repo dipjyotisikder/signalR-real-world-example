@@ -4,13 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SignalR.Common.Constants;
-using SignalR.SelfHosted.Messages.Services;
-using SignalR.SelfHosted.Hubs;
-using SignalR.SelfHosted.Hubs.Services;
-using SignalR.SelfHosted.Users.Services;
 using System;
 using System.Text;
-using SignalR.SelfHosted.Data.SqLite;
+using SignalR.Api.MessagingModule.Services;
+using SignalR.Api.UserModule.Services;
+using SignalR.Api.Infrastructure.Services;
+using SignalR.Api.Hubs.Services;
+using SignalR.Api.Data.SqLite;
+using SignalR.Api.Hubs;
 
 // SERVICE CONTAINER
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IAzureSignalRService, AzureSignalRService>();
 
 builder.Services.AddCors();
 

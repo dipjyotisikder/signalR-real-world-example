@@ -21,10 +21,12 @@ builder.Services
     {
         option.ConnectionString = builder.Configuration.GetConnectionString(AzureHubConstants.AzureSignalRConnectionKey);
 
-        option.UseJsonObjectSerializer(new NewtonsoftJsonObjectSerializer(new JsonSerializerSettings
-        {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-        }));
+        option.UseJsonObjectSerializer(
+            new NewtonsoftJsonObjectSerializer(
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                }));
     })
     .BuildServiceManager()
     .CreateHubContextAsync(AzureHubConstants.HubName, default)

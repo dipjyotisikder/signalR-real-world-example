@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System;
 using SignalR.Common.Constants;
 
-namespace SignalR.SelfHosted.Hubs.Services;
+namespace SignalR.Api.Hubs.Services;
 
 /// <summary>
 /// Represents the request MiddleWare to handle access-token.

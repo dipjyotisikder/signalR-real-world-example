@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Hubs.Services;
+namespace SignalR.Api.Hubs.Services;
 
 /// <summary>
 /// Represents the interface for Hub operation.

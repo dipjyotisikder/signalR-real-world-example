@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SignalR.Selfhosted\SignalR.SelfHosted.csproj" />
+    <ProjectReference Include="..\SignalR.Selfhosted\SignalR.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

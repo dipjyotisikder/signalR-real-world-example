@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Hubs.Services;
+namespace SignalR.Api.Hubs.Services;
 
 /// <summary>
 /// Represents the implementation class for <see cref="IHubService"/>.

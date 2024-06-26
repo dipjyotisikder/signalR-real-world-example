@@ -3,7 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SignalR.SelfHosted.Data.SqLite;
+using SignalR.Api.Data.SqLite;
 
 #nullable disable
 

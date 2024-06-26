@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
 
 namespace SignalR.SelfHosted.Data.SqLite.Migrations
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SignalR.SelfHosted.Messages.Models.Entities;
-using SignalR.SelfHosted.Users.Models.Entities;
+using SignalR.Api.MessagingModule.Models.Entities;
+using SignalR.Api.UserModule.Models.Entities;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Data.SqLite;
+namespace SignalR.Api.Data.SqLite;
 
 /// <summary>
 /// Represents the Database context class handle data.

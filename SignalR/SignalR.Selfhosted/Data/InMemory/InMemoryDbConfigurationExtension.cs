@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SignalR.SelfHosted.Data.InMemory
+namespace SignalR.Api.Data.InMemory
 {
     /// <summary>
     /// Represents the class for in memory database configuration.

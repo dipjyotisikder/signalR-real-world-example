@@ -1,4 +1,4 @@
-﻿namespace SignalR.SelfHosted.Hubs.Services
+﻿namespace SignalR.Api.Hubs.Services
 {
     /// <summary>
     /// Represents the value-object for SignalR hub event name.

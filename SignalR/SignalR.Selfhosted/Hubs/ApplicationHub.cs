@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using SignalR.SelfHosted.Users.Services;
+using SignalR.Api.UserModule.Services;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace SignalR.SelfHosted.Hubs;
+namespace SignalR.Api.Hubs;
 
 /// <summary>
 /// Represents the Application SignalR hub to real-time communication.
