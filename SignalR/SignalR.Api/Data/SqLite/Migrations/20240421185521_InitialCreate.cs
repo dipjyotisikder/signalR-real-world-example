@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
 
-namespace SignalR.SelfHosted.Data.SqLite.Migrations
+namespace SignalR.Api.Data.SqLite.Migrations
 {
     public partial class InitialCreate : Migration
     {

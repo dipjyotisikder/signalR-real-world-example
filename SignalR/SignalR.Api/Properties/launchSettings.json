@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "SignalR.Selfhosted": {
+    "SignalR.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
