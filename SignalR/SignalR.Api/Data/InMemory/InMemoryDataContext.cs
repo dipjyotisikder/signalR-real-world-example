@@ -10,11 +10,15 @@ namespace SignalR.Api.Data.InMemory;
 /// </summary>
 public class InMemoryDataContext : DbContext, IDataContext
 {
+    /// <summary>
+    /// Constructor for <see cref="InMemoryDataContext"/>.
+    /// </summary>
     public InMemoryDataContext(DbContextOptions<InMemoryDataContext> options) : base(options)
     {
 
     }
 
+    /// <inheritdoc/>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserConfiguration());
